@@ -5,15 +5,14 @@ import { hashPassword } from "../utils/password.js";
 
 const seedData = async () => {  
     try {
-        const PERMISSION =[
-            { name: "view_dashboard", description: "Xem dashboard" },
-            { name: "manage_devices", description: "Quản lý thiết bị" },
-            { name: "manage_services", description: "Quản lý dịch vụ" },
-            { name: "issue_queue_number", description: "Cấp số" },
-            { name: "call_queue_number", description: "Gọi số" },
-            { name: "view_reports", description: "Xem báo cáo" },
-            { name: "system_settings", description: "Quản lý cài đặt hệ thống" }
-        ]
+        const PERMISSION = [
+        { name: "view_dashboard", description: "Xem dashboard báo cáo" },
+        { name: "manage_devices", description: "Quản lý thiết bị" },
+        { name: "manage_services", description: "Quản lý dịch vụ" },
+        { name: "issue_queue_number", description: "Cấp số và gọi số khách hàng" },
+        { name: "view_reports", description: "Xem báo cáo thống kê" },
+        { name: "system_settings", description: "Quản lý cài đặt hệ thống" }
+        ];
         const permissionDocs = [];
         for (const per of PERMISSION) {
             const exist = await Permission.findOne({ name: per.name });
@@ -26,18 +25,18 @@ const seedData = async () => {
         }
          // Helper lấy permission id theo tên
         const getId = (name) => permissionDocs.find(p => p.name === name)._id;
+        
         const roleData=[
-            {
+             {
                 name: "admin",
-                permissions: permissionDocs.map((p) => p._id), // full quyền
+                permissions: permissionDocs.map((p) => p._id), // Full quyền
             },
             {
-                name: "issuer", // nhân viên cấp số
-                permissions: [getId("issue_queue_number")]
-            },
-            {
-                name: "caller", // nhân viên gọi số
-                permissions: [getId("call_queue_number")]
+                name: "staff",
+                permissions: [
+                getId("view_dashboard"),
+                getId("issue_queue_number"),
+                ],
             },
         ]
         let adminRoleId = null;
