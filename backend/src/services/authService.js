@@ -49,42 +49,6 @@ export const loginService =async (data)=>{
         refreshToken: refresh,
     }
 }
-//2:register
-export const registerService =async (data)=>{
-    const { full_name, email, phone, password, role,avatar_url } = data;
-     if (!full_name || !email || !phone || !password || !role) {
-        throw new ApiError(400, "Vui lòng nhập đầy đủ thông tin bắt buộc");
-    }
-    // 1. Check email đã tồn tại chưa
-    const existEmail = await User.findOne({ email });
-    if (existEmail) {
-        throw new ApiError(400, "Email đã tồn tại");
-    }
-
-    // 2. Hash password
-    const hashedPassword = hashPassword(password);
-
-    // 3. Tạo user mới
-    const newUser = await User.create({
-        full_name,
-        email,
-        phone,
-        password: hashedPassword,
-        role,
-        status: "inactive", 
-        avatar_url:avatar_url||"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwk4R-qESlPq8lZz2mn3BcbVVROHU7-WxvU7nKNf1cDBZcOReoDuAnzKYOUBkN4UBGmcY&usqp=CAU"
-    });
-    return  {
-    id: newUser._id,
-    full_name: newUser.full_name,
-    email: newUser.email,
-    phone: newUser.phone,
-    role: newUser.role,
-    status: newUser.status,
-    avatar_url: newUser.avatar_url,
-  };;
-
-}
 //forgot_password
 export const forgotPasswordService=async(email)=>{
     const exitUser= await User.findOne({email:email});
@@ -194,6 +158,64 @@ export const resetPasswordService =async (token,newPassword)=>{
     return "Đổi mật khẩu thành công";
 }
 //get profile
-export const getProfileService = ()=>{
+export const getProfileService =async ()=>{
     
+}
+//update profile 
+export const updateProfileService = async (userId,data,file)=>{
+    const { full_name, email, phone, password, role } = data;
+     if (!full_name || !email || !phone || !password || !role) {
+        throw new ApiError(400, "Vui lòng nhập đầy đủ thông tin bắt buộc");
+    }
+
+    // 2. Hash password
+    const hashedPassword = hashPassword(password);
+    let avatarUrl = file?.path || 
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwk4R-qESlPq8lZz2mn3BcbVVROHU7-WxvU7nKNf1cDBZcOReoDuAnzKYOUBkN4UBGmcY&usqp=CAU";
+
+     const updateData = {
+        full_name,
+        email,
+        password:hashedPassword,
+        phone,
+        role,
+     };
+        if (avatarUrl) {
+        updateData.avatar_url = avatarUrl;
+    }
+     const update = await User.findByIdAndUpdate(userId,updateData,{ new: true });
+
+     return update 
+}
+
+// refesh tokrn 
+export const refreshTokenService = async (refreshToken)=>{
+    if (!refreshToken) {
+        throw new ApiError(400, "Refresh token là bắt buộc");
+    }
+    // 1. Tìm refresh token trong DB
+    const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
+     if (!tokenDoc) {
+        throw new ApiError(401, "Refresh token không hợp lệ hoặc đã bị thu hồi");
+    }
+    // 2. Kiểm tra hạn
+    if (tokenDoc.expiresAt < new Date()) {
+        // Xoá token hết hạn
+        await RefreshToken.deleteOne({ _id: tokenDoc._id });
+        throw new ApiError(401, "Refresh token đã hết hạn");
+    }
+       // 3. Kiểm tra user
+    const user = await User.findById(tokenDoc.user);
+    if (!user) {
+        throw new ApiError(404, "Người dùng không tồn tại");
+    }
+    // 4. Tạo access token mới
+    const newAccessToken = signAccessToken({
+        id: user._id,
+        role: user.role,
+    });
+
+    return {
+        access_token: newAccessToken,
+    };
 }

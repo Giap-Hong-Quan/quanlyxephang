@@ -1,4 +1,4 @@
-import { forgotPasswordService, loginService, registerService, resetPasswordService } from "../services/authService.js"
+import { forgotPasswordService, loginService, resetPasswordService, updateProfileService } from "../services/authService.js"
 import { success } from "../utils/success.js";
 
 export const loginController = async (req,res,next)=>{
@@ -13,14 +13,6 @@ export const loginController = async (req,res,next)=>{
         return success(res,{user,accessToken,refreshToken},"Đăng nhập thành công",200)
     } catch (error) {
         next(error)
-    }
-}
-export const registerController =async(req,res,next)=>{
-    try {
-        const result =await registerService(req.body);
-        return success(res,result,"Đăng ký thành công",201);
-    } catch (error) {
-        next(error);
     }
 }
 export const forgotPasswordController =async (req,res,next )=>{
@@ -52,3 +44,13 @@ export const getProfileController = async (req, res, next) => {
         next(error);
     }
 };
+
+export const updateProfileController =async (req,res,next) =>{
+    try {
+        
+        const result = await updateProfileService(req.user._id, req.body);
+        return success(res,result,"Cập nhật thành công",201);
+    } catch (error) {
+        next(error)
+    }
+}
