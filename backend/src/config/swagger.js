@@ -5,16 +5,30 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "API QUẢN LÝ XẾP HÀNG ",
+      title: "API QUẢN LÝ XẾP HÀNG",
       version: "1.0.0",
-      description: "Xem chi tiết các api dành cho dự án QUẢN LÝ XẾP HÀNG ",
+      description: "Xem chi tiết các API của dự án QUẢN LÝ XẾP HÀNG",
     },
     servers: [
-      { url: "http://localhost:5003", description: "Local server" }
+      {
+        url: "http://localhost:5003",
+        description: "Local server",
+      },
     ],
+
+    // ✅ BẮT BUỘC: khai báo bearerAuth
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
 
-  // Nơi swagger tìm comment mô tả API
+  // nơi swagger đọc comment
   apis: ["./src/routes/*.js"],
 };
 
@@ -22,6 +36,5 @@ export const swaggerSpec = swaggerJsdoc(options);
 
 export const swaggerDocs = (app) => {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-  console.log("Đường dẫn Swagger : http://localhost:5003/api-docs");
+  console.log("Swagger chạy tại: http://localhost:5003/api-docs");
 };

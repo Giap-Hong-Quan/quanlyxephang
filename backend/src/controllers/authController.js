@@ -1,4 +1,4 @@
-import { forgotPasswordService, loginService, resetPasswordService, updateProfileService } from "../services/authService.js"
+import { forgotPasswordService, loginService, logoutService, refreshTokenService, resetPasswordService } from "../services/authService.js"
 import { success } from "../utils/success.js";
 
 export const loginController = async (req,res,next)=>{
@@ -33,23 +33,30 @@ export const resetPasswordController =async (req,res,next)=>{
         next(error)
     }
 }
-export const getProfileController = async (req, res, next) => {
-    try {
-        return res.status(200).json({
-            success: true,
-            message: "Lấy thông tin người dùng thành công",
-            data: req.user
-        });
-    } catch (error) {
-        next(error);
-    }
-};
 
-export const updateProfileController =async (req,res,next) =>{
+
+
+
+export const refreshTokenController = async (req,res,next)=>{
     try {
-        
-        const result = await updateProfileService(req.user._id, req.body);
-        return success(res,result,"Cập nhật thành công",201);
+         const refresh_token = req.cookies.refresh_token;
+        const result =await refreshTokenService(refresh_token)
+        return success(res,result,"Tạo token mơi thành công",200)
+    } catch (error) {
+        next(error)
+    }
+}
+// logput
+
+export const logoutController =async (req,res,next)=>{
+    try {
+       const result= await logoutService(req.user._id);
+           res.clearCookie("refresh_token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none", // hoặc "none" nếu cross-site
+            });
+        success(res,result,"Đăng xuất thành công",201);
     } catch (error) {
         next(error)
     }

@@ -157,48 +157,17 @@ export const resetPasswordService =async (token,newPassword)=>{
     await exitUser.save();
     return "Đổi mật khẩu thành công";
 }
-//get profile
-export const getProfileService =async ()=>{
-    
-}
-//update profile 
-export const updateProfileService = async (userId,data,file)=>{
-    const { full_name, email, phone, password, role } = data;
-     if (!full_name || !email || !phone || !password || !role) {
-        throw new ApiError(400, "Vui lòng nhập đầy đủ thông tin bắt buộc");
-    }
-
-    // 2. Hash password
-    const hashedPassword = hashPassword(password);
-    let avatarUrl = file?.path || 
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwk4R-qESlPq8lZz2mn3BcbVVROHU7-WxvU7nKNf1cDBZcOReoDuAnzKYOUBkN4UBGmcY&usqp=CAU";
-
-     const updateData = {
-        full_name,
-        email,
-        password:hashedPassword,
-        phone,
-        role,
-     };
-        if (avatarUrl) {
-        updateData.avatar_url = avatarUrl;
-    }
-     const update = await User.findByIdAndUpdate(userId,updateData,{ new: true });
-
-     return update 
-}
-
 // refesh tokrn 
 export const refreshTokenService = async (refreshToken)=>{
     if (!refreshToken) {
         throw new ApiError(400, "Refresh token là bắt buộc");
     }
-    // 1. Tìm refresh token trong DB
+    //  Tìm refresh token trong DB
     const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
      if (!tokenDoc) {
         throw new ApiError(401, "Refresh token không hợp lệ hoặc đã bị thu hồi");
     }
-    // 2. Kiểm tra hạn
+    // Kiểm tra hạn
     if (tokenDoc.expiresAt < new Date()) {
         // Xoá token hết hạn
         await RefreshToken.deleteOne({ _id: tokenDoc._id });
@@ -209,7 +178,7 @@ export const refreshTokenService = async (refreshToken)=>{
     if (!user) {
         throw new ApiError(404, "Người dùng không tồn tại");
     }
-    // 4. Tạo access token mới
+    //  Tạo access token mới
     const newAccessToken = signAccessToken({
         id: user._id,
         role: user.role,
@@ -219,3 +188,9 @@ export const refreshTokenService = async (refreshToken)=>{
         access_token: newAccessToken,
     };
 }
+
+// logout
+export const logoutService = async (userId) => {
+    await RefreshToken.deleteMany({ user: userId });
+    return "Đăng xuất thành công";
+};

@@ -1,7 +1,6 @@
 import express from 'express';
-import { forgotPasswordController, getProfileController, loginController, resetPasswordController, updateProfileController } from '../controllers/authController.js';
+import { forgotPasswordController, loginController, logoutController, refreshTokenController, resetPasswordController } from '../controllers/authController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
-import { uploadSingle } from '../middlewares/uploadMiddleware.js';
 
 const authRouter = express.Router();
 /**
@@ -153,55 +152,52 @@ authRouter.post("/forgot-password", forgotPasswordController);
  *         description: Lỗi server
  */
 authRouter.post("/reset-password", resetPasswordController);
+
 /**
  * @openapi
- * /api/auth/profile:
- *   get:
+ * /api/auth/refresh-token:
+ *   post:
  *     tags:
  *       - Auth
- *     summary: Xem thông tin cá nhân
- *     description: API lấy thông tin user hiện tại (cần JWT Access Token)
+ *     summary: Tạo access token mới
+ *     description: |
+ *       API dùng **refresh token được lưu trong httpOnly cookie** để cấp access token mới.
+ *
+ *       ⚠️ Lưu ý:
+ *       - FE **KHÔNG gửi refresh token trong body**
+ *       - Trình duyệt sẽ tự động gửi cookie `refresh_token`
+ *       - Khi FE gọi API này **phải bật `withCredentials: true`**
+ *
+ *       Ví dụ FE (Axios):
+ *       ```js
+ *       axios.post(
+ *         "http://localhost:5003/api/auth/refresh-token",
+ *         {},
+ *         { withCredentials: true }
+ *       );
+ *       ```
+ *     responses:
+ *       200:
+ *         description: Tạo access token mới thành công
+ *       401:
+ *         description: Refresh token không hợp lệ hoặc đã hết hạn
+ */
+authRouter.post("/refresh-token", refreshTokenController);
+/**
+ * @openapi
+ * /api/auth/logout:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Đăng xuất và thu hồi refresh token
+ *     description: Xóa refresh token trong database để kết thúc phiên đăng nhập.
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lấy thông tin thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Lấy thông tin người dùng thành công
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: 673efd9b97f234abc1234aaa
- *                     full_name:
- *                       type: string
- *                       example: Nguyễn Văn A
- *                     email:
- *                       type: string
- *                       example: nguyenvana@gmail.com
- *                     phone:
- *                       type: string
- *                       example: "098888888"
- *                     role:
- *                       type: string
- *                       example: staff
- *                     status:
- *                       type: string
- *                       example: active
+ *         description: Đăng xuất thành công
  *       401:
- *         description: Không có token hoặc token hết hạn
+ *         description: Không có token hoặc token không hợp lệ
  */
-authRouter.get('/profile',verifyToken,getProfileController)
-
-authRouter.put('/:id',uploadSingle("avatar_url"),updateProfileController)
+authRouter.post('/logout',verifyToken,logoutController)
 export default authRouter;
