@@ -1,0 +1,41 @@
+/* Input style */
+.custom-input {
+  height: 42px;
+  border-radius: 6px !important;
+}
+
+/* Label của AntD */
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #444;
+  font-size: 14px;
+}
+
+/* --- Quên mật khẩu --- */
+.forgot {
+  width: 100%;
+  text-align: left;       
+  margin-top: -5px;
+  margin-bottom: 10px;    
+}
+
+.forgot a {
+  color: #ff4d4f;
+  font-size: 12px;       
+}
+
+
+/* Nút Đăng nhập */
+.btn-login {
+  height: 42px;
+  background: #ff8a00;
+  border-color: #ff8a00;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.btn-login:hover {
+  background: #ff9f2a !important;
+  border-color: #ff9f2a !important;
+}

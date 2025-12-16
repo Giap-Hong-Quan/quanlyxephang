@@ -8,7 +8,14 @@ import { sendEmail } from './sendEmail.js';
 //1:login
 export const loginService =async (data)=>{
     const {email,password} = data;
-    const exitUser = await User.findOne({email:email});
+    const exitUser = await User.findOne({ email })
+    .populate({
+      path: "role",
+      populate: {
+        path: "permissions",
+        model: "Permission",
+      },
+    });
     if(!exitUser) throw new ApiError(404,"Email Không tồn tại");
     const ok  =comparePassword(password,exitUser.password)
     if(!ok) throw new ApiError(404,"Mât khẩu không hợp lệ");
@@ -17,10 +24,14 @@ export const loginService =async (data)=>{
         exitUser.status = "active";
         await exitUser.save();
     }
+      // lấy permission NAME (STRING)
+    const permissionNames = exitUser.role.permissions.map(
+        (p) => p.name
+    );
     // 3. Tạo Access Token
     const access = signAccessToken({
         id:exitUser._id,
-        role:exitUser.role
+        role:exitUser.role.name
     })
     // 4. Tạo Refresh Token
     const refresh=signRefreshToken({
@@ -41,7 +52,8 @@ export const loginService =async (data)=>{
             full_name: exitUser.full_name,
             email: exitUser.email,
             phone: exitUser.phone,
-            role: exitUser.role,
+            role: exitUser.role.name,
+            permissions: permissionNames, 
             status:exitUser.status,
             avatar_url: exitUser.avatar_url,
         },
@@ -174,14 +186,14 @@ export const refreshTokenService = async (refreshToken)=>{
         throw new ApiError(401, "Refresh token đã hết hạn");
     }
        // 3. Kiểm tra user
-    const user = await User.findById(tokenDoc.user);
+    const user = await User.findById(tokenDoc.user).populate("role");
     if (!user) {
         throw new ApiError(404, "Người dùng không tồn tại");
     }
     //  Tạo access token mới
     const newAccessToken = signAccessToken({
         id: user._id,
-        role: user.role,
+        role: user.role.name,
     });
 
     return {

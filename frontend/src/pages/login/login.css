@@ -1,0 +1,73 @@
+/* Bao toàn trang */
+.login {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Cột trái */
+.col1 {
+  flex: 1.4;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Khung form */
+.form {
+  width: 80%;
+  max-width: 380px;
+  text-align: center;
+}
+
+/* Logo */
+.imgLogo {
+  width: 45%;
+  object-fit: contain;
+  margin-bottom: 100px;
+}
+
+/* Cột phải */
+.col2 {
+  flex: 2.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Khung chứa ảnh + chữ */
+.hero {
+  position: relative;
+  width: 80%;
+  max-width: 600px;
+}
+
+/* Ảnh minh hoạ */
+.hero-img {
+  width: 100%;
+  display: block;
+}
+
+/* Chữ mặt phải */
+.hero-text { 
+  position: absolute;
+  top: 50%;
+  right:5%;
+  line-height: 1.3;
+}
+
+/* "Hệ thống" */
+.hero-sub {
+  font-size: 28px;
+  color: #ff8a00;
+  margin: 0;
+}
+
+/* "QUẢN LÝ XẾP HÀNG" */
+.hero-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ff8a00;
+  margin: 0;
+}
