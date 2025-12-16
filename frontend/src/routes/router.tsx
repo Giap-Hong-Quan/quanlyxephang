@@ -8,15 +8,13 @@ import RequirePermission from "../libs/RequirePermission";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import DevicePage from "../pages/device/DevicePage";
 import ServicePage from "../pages/service/ServicePage";
-import RequireAuth from "../libs/RequireAuth";
 import QueuePage from "../pages/queue/QueuePage";
 import ReportPage from "../pages/report/ReportPage";
-// import RoleRedirect from "../libs/RoleRedirect";
+import RequireAuth from "../libs/RequireAuth";
 const router = createBrowserRouter(
     [
         {path:"/login",element:<Login/>},
         { path: "/unauthorized", element: <Unauthorized /> },
-        { path: "/", element: <RoleRedirect /> },
 
         {path:"/",
         element: <RequireAuth/>,
@@ -26,6 +24,10 @@ const router = createBrowserRouter(
                 children:[
                     {
                         index: true,
+                        element: <RoleRedirect />,
+                    },
+                    {
+                         path: "dashboard",
                         element: (
                         <RequirePermission permission="view_dashboard">
                             <DashboardPage />

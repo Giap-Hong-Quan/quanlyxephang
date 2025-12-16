@@ -1,14 +1,15 @@
 // # check có user / token Chỉ hỏi: “Có login chưa?”
 
-import { Navigate, Outlet } from "react-router-dom"
-import { useAppSelector } from "../hooks/storeHook"
+import { Navigate, Outlet } from "react-router-dom";
 
+const RequireAuth = () => {
+  const token = localStorage.getItem("accessToken");
 
-const RequireAuth =()=>{
-    const user = useAppSelector((state)=>state.auth.user)
-    if(!user) {
-        return <Navigate to="/login" replace/>
-    }
-    return <Outlet/>
-}
-export default RequireAuth
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
+
+export default RequireAuth;

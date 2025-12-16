@@ -3,12 +3,10 @@ import { User } from "../../types/authTypes";
 
 interface AuthState {
   user: User | null;
-  loading: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
-  loading: true,
 };
 
 const authSlice = createSlice(
@@ -21,10 +19,7 @@ const authSlice = createSlice(
             },
             clearUser(state){
                 state.user=null
-            },
-             setLoading(state) {
-                state.loading = true;
-            },
+            }
         }
     }
 )

@@ -9,9 +9,7 @@ interface Props {
 
 const RequirePermission = ({permission,children}:Props)=>{
     const user = useAppSelector((state)=>state.auth.user);
-    if(!user) {
-        return <Navigate to="/login" replace/>
-    }
+        if (!user) return null;
      if (!user.permissions.includes(permission)) {
         return <Navigate to="/unauthorized" replace />;
     }
