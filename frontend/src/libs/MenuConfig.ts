@@ -1,16 +1,30 @@
-
-export interface PermissionRoute {
-  permission: string;
-  path: string;
-  label?: string;
+import {ReactComponent as DashboardIcon} from "../assets/icon/dashboard.svg";
+import {ReactComponent as DeviceIcon} from "../assets/icon/device.svg";
+import {ReactComponent as ServiceIcon} from "../assets/icon/service.svg";
+import {ReactComponent as QueueIcon} from "../assets/icon/queue.svg";
+import {ReactComponent as ReportIcon} from "../assets/icon/report.svg";
+import {ReactComponent as SettingIcon} from "../assets/icon/setting.svg";
+import { ComponentType, ReactNode, SVGProps } from "react";
+export interface MenuItem {
+  path?: string;
+  label: string;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
+  children?: MenuItem[];
 }
-
-export const PERMISSION_ROUTES: PermissionRoute[] = [
-  { permission: "view_dashboard", path: "/dashboard", label: "Dashboard" },
-  { permission: "manage_devices", path: "/devices", label: "Thiết bị" },
-  { permission: "manage_services", path: "/services", label: "Dịch vụ" },
-  { permission: "issue_queue_number", path: "/queue", label: "Cấp số" },
-  { permission: "view_reports", path: "/reports", label: "Báo cáo" },
-  { permission: "system_settings", path: "/settings", label: "Cài đặt" },
+export const MENU: MenuItem[] = [
+  {icon:DashboardIcon,path: "/dashboard", label: "Dashboard" },
+  {icon:DeviceIcon,path: "/devices", label: "Thiết bị" },
+  {icon:ServiceIcon,path: "/services", label: "Dịch vụ" },
+  {icon:QueueIcon,path: "/queues", label: "Cấp số" },
+  {icon:ReportIcon,path: "/reports", label: "Báo cáo" },
+   {
+    icon:SettingIcon,
+    label: "Cài đặt hệ thống",
+    children: [
+      { path: "/settings/roles", label: "Quản lý vai trò" },
+      { path: "/settings/accounts", label: "Quản lý tài khoản" },
+      { path: "/settings/logs", label: "Nhật ký người dùng" },
+    ],
+  },
 ];
 

@@ -1,64 +1,29 @@
 import crypto from 'crypto';
 import ApiError from "../exceptions/ApiError.js";
-import RefreshToken from "../models/RefreshToken.js";
 import User from "../models/User.js";
-import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { sendEmail } from './sendEmail.js';
+import { signAccessToken } from '../utils/jwt.js';
 //1:login
-export const loginService =async (data)=>{
-    const {email,password} = data;
-    const exitUser = await User.findOne({ email })
-    .populate({
-      path: "role",
-      populate: {
-        path: "permissions",
-        model: "Permission",
-      },
-    });
-    if(!exitUser) throw new ApiError(404,"Email Không tồn tại");
-    const ok  =comparePassword(password,exitUser.password)
-    if(!ok) throw new ApiError(404,"Mât khẩu không hợp lệ");
+export const loginService =async (username,password)=>{
+    const user = await User.findOne({username}).populate("role"," name");
+    if(!user) throw new ApiError(404,"Tên đăng nhập Không tồn tại");
+    const ok  =await comparePassword(password,user.password)
+    if(!ok) throw new ApiError(404,"Mật khẩu không hợp lệ");
     //  Nếu user inactive → kích hoạt
-    if (exitUser.status === "inactive") {
-        exitUser.status = "active";
-        await exitUser.save();
+    if (user.status === "inactive") {
+        user.status = "active";
+        await user.save();
     }
-      // lấy permission NAME (STRING)
-    const permissionNames = exitUser.role.permissions.map(
-        (p) => p.name
-    );
-    // 3. Tạo Access Token
+    // Tạo Access Token
     const access = signAccessToken({
-        id:exitUser._id,
-        role:exitUser.role.name
+        id:user._id,
+        role:user.role.name,
+        type:"accessToken",
     })
-    // 4. Tạo Refresh Token
-    const refresh=signRefreshToken({
-        id:exitUser._id
-    })
-    
-    await RefreshToken.deleteMany({ user: exitUser._id });
-    // 5. Lưu refresh token vào DB (để quản lý logout, chống hack)
-    const createRefresh = await RefreshToken.create({
-        user: exitUser._id,
-        token: refresh,
-        expiresAt: new Date(Date.now() + 7 * 86400 * 1000),
-    })
-    // 6. Trả về FE
+    // Trả về FE
     return {
-        user :{
-            id: exitUser._id,
-            full_name: exitUser.full_name,
-            email: exitUser.email,
-            phone: exitUser.phone,
-            role: exitUser.role.name,
-            permissions: permissionNames, 
-            status:exitUser.status,
-            avatar_url: exitUser.avatar_url,
-        },
         accessToken: access,
-        refreshToken: refresh,
     }
 }
 //forgot_password
@@ -156,53 +121,25 @@ export const forgotPasswordService=async(email)=>{
     return "Đã gửi email reset mật khẩu";
 }
 //reset_password
-
 export const resetPasswordService =async (token,newPassword)=>{
     const exitUser = await User.findOne({
         reset_token: token,
         reset_token_expires: { $gt: Date.now() },
     });
     if (!exitUser) throw new ApiError(400, "Token không hợp lệ hoặc đã hết hạn");
-    exitUser.password = hashPassword(newPassword);
+    exitUser.password =await hashPassword(newPassword);
     exitUser.reset_token = null;
     exitUser.reset_token_expires = null;
     await exitUser.save();
     return "Đổi mật khẩu thành công";
 }
-// refesh tokrn 
-export const refreshTokenService = async (refreshToken)=>{
-    if (!refreshToken) {
-        throw new ApiError(400, "Refresh token là bắt buộc");
-    }
-    //  Tìm refresh token trong DB
-    const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
-     if (!tokenDoc) {
-        throw new ApiError(401, "Refresh token không hợp lệ hoặc đã bị thu hồi");
-    }
-    // Kiểm tra hạn
-    if (tokenDoc.expiresAt < new Date()) {
-        // Xoá token hết hạn
-        await RefreshToken.deleteOne({ _id: tokenDoc._id });
-        throw new ApiError(401, "Refresh token đã hết hạn");
-    }
-       // 3. Kiểm tra user
-    const user = await User.findById(tokenDoc.user).populate("role");
-    if (!user) {
-        throw new ApiError(404, "Người dùng không tồn tại");
-    }
-    //  Tạo access token mới
-    const newAccessToken = signAccessToken({
-        id: user._id,
-        role: user.role.name,
-    });
-
-    return {
-        access_token: newAccessToken,
-    };
-}
-
 // logout
 export const logoutService = async (userId) => {
-    await RefreshToken.deleteMany({ user: userId });
-    return "Đăng xuất thành công";
+    const user = await User.findById(userId)
+    if(!user) throw new ApiError(404,"Tài khoản Không tồn tại");
+    if(user.status !== "active"){
+        throw new ApiError(404,"Tài khoản chưa đăng nhập");
+    }
+    user.status = "inactive"
+    await user.save();
 };

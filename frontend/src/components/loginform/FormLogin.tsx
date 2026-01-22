@@ -1,28 +1,35 @@
 import React from 'react';
 import type { FormProps } from 'antd';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "./formlogin.css";
-import { loginService } from '../../services/authService';
+// import { loginService } from '../../services/authService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/storeHook';
-import { setUser } from '../../stores/slices/authSlice';
-
+import { loginThunk } from '../../stores/slices/authSlice';
 type FieldType = {
   email: string;
   password: string;
 };
 
 const FormLogin: React.FC = () => {
-  const navigate = useNavigate(); // ✅ ĐÚNG CHỖ
- const dispatch = useAppDispatch(); 
+  const dispatch =useAppDispatch()
+  const navigate = useNavigate();
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
-      const user = await loginService(values);
-      dispatch(setUser(user));
-      toast.success("Đăng nhập thành công");
-      navigate("/"); // ✅ OK
+      // const user = await loginService(values);
+      // if(!user) console.log("lỗi")
+      // toast.success("Đăng nhập thành công");
+      // navigate("/"); 
+      const result = await dispatch(loginThunk({
+        email: values.email,
+        password: values.password,
+        role: "string", 
+      })).unwrap();
+      message.success("Đăng nhập thành công");
+      console.log("USER:", result);
+      navigate("/");
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Đăng nhập thất bại");
     }

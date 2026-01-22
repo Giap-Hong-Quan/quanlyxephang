@@ -6,7 +6,6 @@ import router from './routes/index.js';
 import { swaggerDocs } from './config/swagger.js';
 import seedData from './config/seed.js';
 import { errorHandle } from './middlewares/errorMiddleware.js';
-import cookieParser from "cookie-parser";
 // dotenv.config();
 const app= express();
 app.use(cors());
@@ -14,7 +13,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 // Gọi swagger
 swaggerDocs(app);
-app.use(cookieParser());
 app.use('/api',router);
 app.use(errorHandle);
 connectDB();

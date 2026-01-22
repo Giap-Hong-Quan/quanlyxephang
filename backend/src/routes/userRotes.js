@@ -1,6 +1,6 @@
 import express from 'express'
-import { uploadSingle } from '../middlewares/uploadMiddleware.js';
-import { createUserController, getAllUserController, getProfileController } from '../controllers/userController.js';
+import { upload } from '../middlewares/uploadMiddleware.js';
+import { createUserController, getAllUserController } from '../controllers/userController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 const userRouter= express.Router();
 /**
@@ -19,99 +19,53 @@ const userRouter= express.Router();
  *           schema:
  *             type: object
  *             required:
+ *               - username
  *               - full_name
  *               - email
- *               - phone
  *               - password
  *               - role
+ *               - file
  *             properties:
+ *               username:
+ *                 type: string
+ *                 example: hoang123
  *               full_name:
  *                 type: string
  *                 example: Nguyễn Văn A
  *               email:
  *                 type: string
  *                 example: user@gmail.com
- *               phone:
- *                 type: string
- *                 example: "0987654321"
  *               password:
  *                 type: string
  *                 example: user123
  *               role:
  *                 type: string
+ *                 description: ObjectId của role
  *                 example: 673eff3397fa23abc1234bbb
- *               avatar_url:
+ *               file:
  *                 type: string
  *                 format: binary
+ *                 description: Ảnh đại diện tải lên
  *     responses:
  *       201:
- *         description: Tạo user thành công
+ *         description: Đăng ký thành công
+ *       400:
+ *         description: Thiếu dữ liệu hoặc không có ảnh đại diện
  *       401:
  *         description: Chưa đăng nhập
  *       403:
  *         description: Không có quyền admin
+ *       409:
+ *         description: Tên hoặc Email này đã tồn tại
  */
-userRouter.post('/create',verifyToken,uploadSingle("avatar_url"),createUserController)
-/**
- * @openapi
- * /api/user/profile:
- *   get:
- *     tags:
- *       - User
- *     summary: Xem thông tin cá nhân
- *     description: API lấy thông tin user hiện tại (cần JWT Access Token)
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lấy thông tin thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Lấy thông tin người dùng thành công
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: 673efd9b97f234abc1234aaa
- *                     full_name:
- *                       type: string
- *                       example: Nguyễn Văn A
- *                     email:
- *                       type: string
- *                       example: nguyenvana@gmail.com
- *                     phone:
- *                       type: string
- *                       example: "098888888"
- *                     role:
- *                       type: string
- *                       example: staff
- *                     status:
- *                       type: string
- *                       example: active
- *       401:
- *         description: Không có token hoặc token hết hạn
- */
-userRouter.get('/profile',verifyToken,getProfileController)
+userRouter.post('/create',verifyToken,upload.single("avatar_url"),createUserController)
 /**
  * @openapi
  * /api/user:
  *   get:
  *     tags:
  *       - User
- *     summary: Lấy danh sách người dùng
- *     description: |
- *       API lấy danh sách tất cả người dùng trong hệ thống.
- *       - Yêu cầu đăng nhập (JWT Access Token).
- *       - Hỗ trợ phân trang, tìm kiếm và lọc theo trạng thái.
+ *     summary: Lấy danh sách user (có phân trang và lọc)
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -120,69 +74,79 @@ userRouter.get('/profile',verifyToken,getProfileController)
  *         schema:
  *           type: integer
  *           example: 1
- *         description: Trang hiện tại
+ *         description: Số trang muốn lấy (mặc định = 1)
+ *       
  *       - in: query
- *         name: limit
+ *         name: sizePage
  *         schema:
  *           type: integer
  *           example: 10
- *         description: Số bản ghi trên mỗi trang
+ *         description: Số lượng user trong 1 trang (mặc định = 10)
+ *       
  *       - in: query
  *         name: search
  *         schema:
  *           type: string
- *           example: admin
- *         description: Tìm kiếm theo tên, email hoặc số điện thoại
+ *           example: hoang
+ *         description: Tìm kiếm theo username, full_name hoặc email (regex, không phân biệt hoa thường)
+ *       
  *       - in: query
- *         name: status
+ *         name: roleId
  *         schema:
  *           type: string
- *           enum: [active, inactive]
- *         description: Lọc theo trạng thái người dùng
+ *           example: 673eff3397fa23abc1234bbb
+ *         description: Lọc theo ID role
+ *     
  *     responses:
  *       200:
- *         description: Lấy danh sách người dùng thành công
+ *         description: Lấy danh sách user thành công
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
+ *                 status:
+ *                   type: string
+ *                   example: success
  *                 message:
  *                   type: string
- *                   example: Lấy danh sách người dùng thành công
+ *                   example: Lấy danh sách user thành công
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         example: 673efd9b97f234abc1234aaa
- *                       full_name:
- *                         type: string
- *                         example: Nguyễn Văn A
- *                       email:
- *                         type: string
- *                         example: nguyenvana@gmail.com
- *                       phone:
- *                         type: string
- *                         example: "0988888888"
- *                       role:
- *                         type: string
- *                         example: admin
- *                       status:
- *                         type: string
- *                         example: active
- *                       avatar_url:
- *                         type: string
- *                         example: https://i.pravatar.cc/300
- *                 pagination:
  *                   type: object
  *                   properties:
- *                     page:
+ *                     users:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 67a1f3a8b9c4d55d129f4e91
+ *                           username:
+ *                             type: string
+ *                             example: hoang123
+ *                           full_name:
+ *                             type: string
+ *                             example: Nguyễn Văn Hoàng
+ *                           email:
+ *                             type: string
+ *                             example: hoang@gmail.com
+ *                           avatar_url:
+ *                             type: string
+ *                             example: https://res.cloudinary.com/.../avatar.png
+ *                           status:
+ *                             type: string
+ *                             example: active
+ *                           role:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                                 example: 673eff3397fa23abc1234bbb
+ *                               name:
+ *                                 type: string
+ *                                 example: Admin
+ *                     currentPage:
  *                       type: integer
  *                       example: 1
  *                     limit:
@@ -191,21 +155,16 @@ userRouter.get('/profile',verifyToken,getProfileController)
  *                     totalPages:
  *                       type: integer
  *                       example: 5
- *                 count:
- *                   type: integer
- *                   example: 42
- *                 countActive:
- *                   type: integer
- *                   example: 30
- *                 countInactive:
- *                   type: integer
- *                   example: 12
+ *                     totalCount:
+ *                       type: integer
+ *                       example: 47
  *       401:
- *         description: Không có token hoặc token không hợp lệ
- *       500:
- *         description: Lỗi server
+ *         description: Chưa đăng nhập
+ *       403:
+ *         description: Không có quyền admin
  */
 userRouter.get('/',verifyToken,getAllUserController)
+
 export default userRouter;
 
 // authRouter.put('/:id',uploadSingle("avatar_url"),updateProfileController)

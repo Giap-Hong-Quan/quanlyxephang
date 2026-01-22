@@ -2,9 +2,15 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
     {
-        full_name:{
+        username:{
             type:String,
             required:true,  
+            unique: true,
+            trim:true,
+        },
+        full_name:{
+            type:String,
+            required:true,
             trim:true,
         },
         email: {
@@ -12,11 +18,6 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             lowercase: true,
-            trim: true,
-        },
-          phone: {
-            type: String,
-            required: true,
             trim: true,
         },
           password: {
@@ -37,15 +38,8 @@ const userSchema = new mongoose.Schema(
             enum: ["active", "inactive"],
             default: "inactive",
         },
-
-         reset_token: {
-            type: String,
-            default: null,
-        },
-        reset_token_expires: {
-            type: Date,
-            default: null,
-        },
+        reset_token: { type: String, default: null },
+        reset_token_expires: { type: Date, default: null },
     },
     {
     timestamps: true,   

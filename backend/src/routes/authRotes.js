@@ -1,5 +1,5 @@
 import express from 'express';
-import { forgotPasswordController, loginController, logoutController, refreshTokenController, resetPasswordController } from '../controllers/authController.js';
+import { forgotPasswordController, getProfileController, loginController, logoutController, resetPasswordController } from '../controllers/authController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const authRouter = express.Router();
@@ -18,12 +18,12 @@ const authRouter = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - email
+ *               - username
  *               - password
  *             properties:
- *               email:
+ *               username:
  *                 type: string
- *                 example: admin@gmail.com
+ *                 example: admin
  *               password:
  *                 type: string
  *                 example: admin
@@ -152,37 +152,6 @@ authRouter.post("/forgot-password", forgotPasswordController);
  *         description: Lỗi server
  */
 authRouter.post("/reset-password", resetPasswordController);
-
-/**
- * @openapi
- * /api/auth/refresh-token:
- *   post:
- *     tags:
- *       - Auth
- *     summary: Tạo access token mới
- *     description: |
- *       API dùng **refresh token được lưu trong httpOnly cookie** để cấp access token mới.
- *
- *       ⚠️ Lưu ý:
- *       - FE **KHÔNG gửi refresh token trong body**
- *       - Trình duyệt sẽ tự động gửi cookie `refresh_token`
- *       - Khi FE gọi API này **phải bật `withCredentials: true`**
- *
- *       Ví dụ FE (Axios):
- *       ```js
- *       axios.post(
- *         "http://localhost:5003/api/auth/refresh-token",
- *         {},
- *         { withCredentials: true }
- *       );
- *       ```
- *     responses:
- *       200:
- *         description: Tạo access token mới thành công
- *       401:
- *         description: Refresh token không hợp lệ hoặc đã hết hạn
- */
-authRouter.post("/refresh-token", refreshTokenController);
 /**
  * @openapi
  * /api/auth/logout:
@@ -200,4 +169,54 @@ authRouter.post("/refresh-token", refreshTokenController);
  *         description: Không có token hoặc token không hợp lệ
  */
 authRouter.post('/logout',verifyToken,logoutController)
+
+/**
+ * @openapi
+ * /api/auth/profile:
+ *   get:
+ *     tags:
+ *       - Auth
+ *     summary: Xem thông tin cá nhân
+ *     description: API lấy thông tin user hiện tại (cần JWT Access Token)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Lấy thông tin người dùng thành công
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 673efd9b97f234abc1234aaa
+ *                     full_name:
+ *                       type: string
+ *                       example: Nguyễn Văn A
+ *                     email:
+ *                       type: string
+ *                       example: nguyenvana@gmail.com
+ *                     phone:
+ *                       type: string
+ *                       example: "098888888"
+ *                     role:
+ *                       type: string
+ *                       example: staff
+ *                     status:
+ *                       type: string
+ *                       example: active
+ *       401:
+ *         description: Không có token hoặc token hết hạn
+ */
+authRouter.get('/profile',verifyToken,getProfileController)
 export default authRouter;
