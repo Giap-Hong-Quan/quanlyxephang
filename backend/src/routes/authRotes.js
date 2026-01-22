@@ -169,7 +169,6 @@ authRouter.post("/reset-password", resetPasswordController);
  *         description: Không có token hoặc token không hợp lệ
  */
 authRouter.post('/logout',verifyToken,logoutController)
-
 /**
  * @openapi
  * /api/auth/profile:

@@ -1,4 +1,4 @@
-import { createUserService, getAllUserService } from "../services/userService.js";
+import { createUserService, deleteUserService, getAllUserService, getUserByIdService, updateUserService } from "../services/userService.js";
 import { success } from "../utils/success.js";
 //create user controller
 export const createUserController =async(req,res,next)=>{
@@ -35,4 +35,32 @@ export const getAllUserController = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+// Lấy chi tiết user
+export const getUserByIdController = async (req, res, next) => {
+    try {
+        const result = await getUserByIdService(req.params.id);
+        return success(res, result, "Lấy chi tiết người dùng thành công");
+    } catch (error) {
+        next(error);
+    }
+};
+// Xóa user
+export const deleteUserController = async (req, res, next) => {
+    try {
+        const result = await deleteUserService(req.params.id);
+        return success(res, result, "Xóa người dùng  thành công",200);
+    } catch (error) {
+        next(error);
+    }
+};
+//câp nhât
+export const updateUserController = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const result = await updateUserService(userId, req.body, req.file);
+        return success(res, result, "Cập nhật thông tin thành công");
+    } catch (error) {
+        next(error);
+    }
 };

@@ -1,6 +1,6 @@
 import express from 'express'
 import { upload } from '../middlewares/uploadMiddleware.js';
-import { createUserController, getAllUserController } from '../controllers/userController.js';
+import { createUserController, deleteUserController, getAllUserController, getUserByIdController, updateUserController } from '../controllers/userController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 const userRouter= express.Router();
 /**
@@ -164,7 +164,217 @@ userRouter.post('/create',verifyToken,upload.single("avatar_url"),createUserCont
  *         description: Không có quyền admin
  */
 userRouter.get('/',verifyToken,getAllUserController)
-
+/**
+ * @openapi
+ * /api/user/{id}:
+ *   get:
+ *     tags:
+ *       - User
+ *     summary: Lấy thông tin chi tiết người dùng theo ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 67a1f3a8b9c4d55d129f4e91
+ *         description: ID của người dùng
+ *     responses:
+ *       200:
+ *         description: Lấy chi tiết người dùng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Lấy chi tiết người dùng thành công
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 67a1f3a8b9c4d55d129f4e91
+ *                     username:
+ *                       type: string
+ *                       example: hoang123
+ *                     full_name:
+ *                       type: string
+ *                       example: Nguyễn Văn Hoàng
+ *                     email:
+ *                       type: string
+ *                       example: hoang@gmail.com
+ *                     avatar_url:
+ *                       type: string
+ *                       example: https://res.cloudinary.com/.../avatar.png
+ *                     status:
+ *                       type: string
+ *                       example: active
+ *                     role:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: 673eff3397fa23abc1234bbb
+ *                         name:
+ *                           type: string
+ *                           example: Admin
+ *       404:
+ *         description: Không tìm thấy người dùng này
+ *       401:
+ *         description: Chưa đăng nhập
+ */
+userRouter.get('/:id',verifyToken,getUserByIdController)
+/**
+ * @openapi
+ * /api/user/{id}:
+ *   delete:
+ *     tags:
+ *       - User
+ *     summary: Xóa người dùng theo ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 67a1f3a8b9c4d55d129f4e91
+ *         description: ID của người dùng cần xóa
+ *     responses:
+ *       200:
+ *         description: Xóa người dùng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Xóa người dùng thành công
+ *                 data:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *       404:
+ *         description: Người dùng không tồn tại hoặc đã bị xóa trước đó
+ *       401:
+ *         description: Chưa đăng nhập
+ *       403:
+ *         description: Không có quyền admin
+ */
+userRouter.delete('/:id',verifyToken,deleteUserController)
+/**
+ * @openapi
+ * /api/user/{id}:
+ *   put:
+ *     tags:
+ *       - User
+ *     summary: Cập nhật thông tin người dùng
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của user cần cập nhật
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: hoang123
+ *               full_name:
+ *                 type: string
+ *                 example: Nguyễn Văn B
+ *               email:
+ *                 type: string
+ *                 example: newemail@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: newpassword123
+ *               role:
+ *                 type: string
+ *                 description: ObjectId của role
+ *                 example: 673eff3397fa23abc1234bbb
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive]
+ *                 example: active
+ *               avatar_url:
+ *                 type: string
+ *                 format: binary
+ *                 description: Ảnh đại diện mới (tùy chọn)
+ *     responses:
+ *       200:
+ *         description: Cập nhật người dùng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Cập nhật thông tin thành công
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 67a1f3a8b9c4d55d129f4e91
+ *                     username:
+ *                       type: string
+ *                       example: hoang123
+ *                     full_name:
+ *                       type: string
+ *                       example: Nguyễn Văn B
+ *                     email:
+ *                       type: string
+ *                       example: newemail@gmail.com
+ *                     avatar_url:
+ *                       type: string
+ *                       example: https://res.cloudinary.com/.../avatar.png
+ *                     status:
+ *                       type: string
+ *                       example: active
+ *                     role:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: 673eff3397fa23abc1234bbb
+ *                         name:
+ *                           type: string
+ *                           example: Admin
+ *       400:
+ *         description: Dữ liệu không hợp lệ
+ *       401:
+ *         description: Chưa đăng nhập
+ *       403:
+ *         description: Không có quyền admin
+ *       404:
+ *         description: Không tìm thấy người dùng
+ *       409:
+ *         description: Username hoặc Email đã tồn tại
+ */
+userRouter.put('/:id', verifyToken, upload.single("avatar_url"),updateUserController);
 export default userRouter;
-
-// authRouter.put('/:id',uploadSingle("avatar_url"),updateProfileController)
