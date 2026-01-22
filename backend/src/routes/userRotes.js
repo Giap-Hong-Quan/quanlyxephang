@@ -1,11 +1,11 @@
 import express from 'express'
 import { upload } from '../middlewares/uploadMiddleware.js';
-import { createUserController, deleteUserController, getAllUserController, getUserByIdController, updateUserController } from '../controllers/userController.js';
+import { createUserController, deleteUserController, getAllUserController, getUserByIdController, getUserCountController, updateUserController } from '../controllers/userController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 const userRouter= express.Router();
 /**
  * @openapi
- * /api/user/create:
+ * /api/user:
  *   post:
  *     tags:
  *       - User
@@ -58,7 +58,30 @@ const userRouter= express.Router();
  *       409:
  *         description: Tên hoặc Email này đã tồn tại
  */
-userRouter.post('/create',verifyToken,upload.single("avatar_url"),createUserController)
+userRouter.post('/',verifyToken,upload.single("avatar_url"),createUserController)
+/**
+ * @swagger
+ * /api/user/count:
+ *   get:
+ *     summary: Lấy tổng số lượng người dùng
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy số lượng người dùng thành công
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: success
+ *               message: Lấy số lượng người dùng thành công
+ *               data:
+ *                 total: 120
+ *       401:
+ *         description: Không có token hoặc token không hợp lệ
+ */
+
+userRouter.get('/count',verifyToken,getUserCountController)
 /**
  * @openapi
  * /api/user:

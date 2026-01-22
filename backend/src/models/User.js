@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema(
         reset_token_expires: { type: Date, default: null },
     },
     {
-    timestamps: true,   
+    timestamps: true, versionKey:false  
     }
 )
 export default mongoose.model("User", userSchema);

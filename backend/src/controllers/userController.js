@@ -1,3 +1,4 @@
+import User from "../models/User.js";
 import { createUserService, deleteUserService, getAllUserService, getUserByIdService, updateUserService } from "../services/userService.js";
 import { success } from "../utils/success.js";
 //create user controller
@@ -63,4 +64,10 @@ export const updateUserController = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+};
+export const getUserCountController = async (req, res, next) => {
+    try {
+        const count = await User.countDocuments();
+        success(res, { count }, "Lấy số lượng tài khoản thành công", 200);
+    } catch (error) { next(error); }
 };

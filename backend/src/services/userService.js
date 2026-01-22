@@ -90,7 +90,7 @@ if(search){
             currentPage,
             limit,
             totalPages: Math.ceil(count / limit),
-            totalCount:count,
+            totalUsers:count,
     }
 }
 // Get User by ID
