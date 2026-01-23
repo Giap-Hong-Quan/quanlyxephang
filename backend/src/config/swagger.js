@@ -28,7 +28,7 @@ const options = {
     },
   },
   // Sử dụng path.join để tránh lỗi đường dẫn khi chạy trên Vercel
-  apis: [path.join(process.cwd(), "src/routes/*.js")],
+  apis: [path.join(process.cwd(), "./src/routes/*.js")],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
