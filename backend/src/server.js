@@ -18,8 +18,11 @@ app.use(errorHandle);
 connectDB();
 seedData();
 
-const port=process.env.PORT || 5003;
-app.listen(port,()=>{
-    console.log(`Server chạy thành công với ${port}`);
-})
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 5003;
+    app.listen(port, () => {
+        console.log(`Server chạy tại http://localhost:${port}`);
+    });
+}
 
+export default app;
