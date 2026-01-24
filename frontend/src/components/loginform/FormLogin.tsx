@@ -39,7 +39,7 @@ const FormLogin: React.FC = () => {
       <Form.Item<FieldType>
         label="Tên đăng nhập"
         name="username"
-        rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+        rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
       >
         <Input className="custom-input" />
       </Form.Item>

@@ -17,14 +17,6 @@ export const MENU: MenuItem[] = [
   {icon:ServiceIcon,path: "/services", label: "Dịch vụ" },
   {icon:QueueIcon,path: "/queues", label: "Cấp số" },
   {icon:ReportIcon,path: "/reports", label: "Báo cáo" },
-   {
-    icon:SettingIcon,
-    label: "Cài đặt hệ thống",
-    children: [
-      { path: "/settings/roles", label: "Quản lý vai trò" },
-      { path: "/settings/accounts", label: "Quản lý tài khoản" },
-      { path: "/settings/logs", label: "Nhật ký người dùng" },
-    ],
-  },
+  {icon:SettingIcon,path: "/users",label: "Tài khoản"},
 ];
 
