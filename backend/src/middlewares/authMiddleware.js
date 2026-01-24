@@ -10,7 +10,7 @@ export const verifyToken = async (req, res, next) => {
         const token = authHeader.split(" ")[1];
         // Giải mã token
         const decoded = verifyAccessToken(token);
-        const user = await User.findById(decoded.id).select("-password -reset_token -reset_token_expires -createdAt -updatedAt");
+        const user = await User.findById(decoded.id).select("-password -reset_token -reset_token_expires -createdAt -updatedAt -__v");
         if (!user) throw new ApiError(404, "Người dùng không tồn tại");
         req.user = user;
         next();
