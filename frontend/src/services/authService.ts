@@ -1,9 +1,10 @@
-// import { LoginPayload, LoginResponse, User } from "../types/authTypes";
-// import apiClient from "./apiClient";
+import { LoginRequset, LoginResponse } from "../types/authTypes";
+import apiClient from "./apiClient";
 
-// export const loginService = async ( data:LoginPayload): Promise<User> =>{
-//     const result =await apiClient.post<LoginResponse>("/auth/login",data);
-//     localStorage.setItem("accessToken",result.data.data.accessToken);
-//     return result.data.data.user;
-// }
-export{};
+export const loginService = async ( data:LoginRequset) : Promise<LoginResponse> =>{
+    const result =await apiClient.post<LoginResponse>("/auth/login",data);
+    const token = result.data.data.accessToken;
+    localStorage.setItem("accessToken",token);
+    console.log(result.data)
+    return result.data;
+}

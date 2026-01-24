@@ -3,33 +3,24 @@ import type { FormProps } from 'antd';
 import { Button, Form, Input, message } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "./formlogin.css";
-// import { loginService } from '../../services/authService';
+
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks/storeHook';
-import { loginThunk } from '../../stores/slices/authSlice';
+import { loginService } from '../../services/authService';
 type FieldType = {
-  email: string;
+  username: string;
   password: string;
 };
 
 const FormLogin: React.FC = () => {
-  const dispatch =useAppDispatch()
   const navigate = useNavigate();
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
-      // const user = await loginService(values);
-      // if(!user) console.log("lỗi")
-      // toast.success("Đăng nhập thành công");
-      // navigate("/"); 
-      const result = await dispatch(loginThunk({
-        email: values.email,
-        password: values.password,
-        role: "string", 
-      })).unwrap();
-      message.success("Đăng nhập thành công");
+      const result = await loginService(values);
+      if(!result) console.log("lỗi")
+      toast.success("Đăng nhập thành công");
+      navigate("/"); 
       console.log("USER:", result);
-      navigate("/");
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Đăng nhập thất bại");
     }
@@ -46,8 +37,8 @@ const FormLogin: React.FC = () => {
     >
       
       <Form.Item<FieldType>
-        label="Email"
-        name="email"
+        label="Tên đăng nhập"
+        name="username"
         rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
       >
         <Input className="custom-input" />
