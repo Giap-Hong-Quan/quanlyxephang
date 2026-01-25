@@ -40,8 +40,8 @@ const router = createBrowserRouter(
                     element: <AdminLayout />,
                     children:[  
                             { index: true, element: <Navigate to="/dashboard" /> },
-                            { path: "dashboard", element: <DashboardPage /> },
-                             { path: "profile", element: <Profile /> },
+                            { path: "dashboard", element: <DashboardPage /> ,handle: { current: "Dashboard" }},
+                             { path: "profile", element: <Profile />,handle: { current: "Thông tin cá nhân" } },
                             {
                                 path: "devices",
                                 children: [
@@ -66,7 +66,7 @@ const router = createBrowserRouter(
                                     // { path: "detail", element: <DetailQueue /> }, 
                                 ]
                             },
-                            { path: "reports", element: <ReportPage /> },
+                            { path: "reports", element: <ReportPage />,handle: { parent: "Báo cáo" } },
                             { path: "users",
                                   children:[
                                     // {index:true,  element: <AccountPage /> },

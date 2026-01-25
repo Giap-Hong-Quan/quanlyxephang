@@ -5,14 +5,21 @@ import nextIcon from '../../assets/icon/next.svg';
 import { getProfile } from '../../services/authService';
 import { toast } from 'sonner';
 import { ProfileResponse } from '../../types/authTypes';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useMatches, useNavigate } from 'react-router-dom';
 // Định nghĩa kiểu dữ liệu cho Props
-interface HeaderProps {
-  parentTitle?: string; // Dấu ? nghĩa là không bắt buộc (optional)
-  currentTitle: string; // Bắt buộc phải có
+interface RouteHandle {
+  parent?: string;
+  current: string;
 }
 
-const HeaderAlta: React.FC<HeaderProps> = ({ parentTitle, currentTitle }) => {
+const HeaderAlta: React.FC = () => {
+  const location = useLocation();
+  const matches = useMatches();
+  // Tìm handle của route hiện tại
+  // Chúng ta lấy match cuối cùng có chứa dữ liệu handle
+  const currentMatch = [...matches].reverse().find((m) => m.handle);
+  const titleData = currentMatch?.handle as RouteHandle | undefined;
+  
   const [profile,setprofile]=useState<ProfileResponse>()
   const navigate=useNavigate()
   const handleGetProfile =async()=>{
@@ -32,19 +39,19 @@ const HeaderAlta: React.FC<HeaderProps> = ({ parentTitle, currentTitle }) => {
       {/* LEFT - Breadcrumb */}
       <div className="breadcrumb-wrapper">
         {/* Chỉ hiển thị parentTitle và dấu > nếu có dữ liệu truyền vào */}
-        {parentTitle && (
+        {titleData?.parent && (
           <>
-            <span className="breadcrumb-item-parent">{parentTitle}</span>
-          
+            <span className="breadcrumb-item-parent">{titleData?.parent}</span>
+          {titleData.parent&&titleData.current?
           <img 
               className="breadcrumb-separator" 
               src={nextIcon} 
               alt="separator" 
-            />
-          
+            />:""
+}
           </>
         )}
-        <span className="breadcrumb-item-active">{currentTitle}</span>
+        <span className="breadcrumb-item-active">{titleData?.current}</span>
       </div>
 
       {/* RIGHT - User */}

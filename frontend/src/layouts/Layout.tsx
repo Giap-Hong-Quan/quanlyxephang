@@ -14,7 +14,7 @@ const AdminLayout = () => {
 
       {/* Right layout */}
       <Layout>
-        <HeaderAlta parentTitle="Thiết bị" currentTitle="Danh sách thiết bị"   />
+        <HeaderAlta   />
         <Content  style={{
                     padding: 24,
                     background: "#f6f6f6",
