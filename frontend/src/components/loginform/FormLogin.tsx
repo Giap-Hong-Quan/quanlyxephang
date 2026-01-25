@@ -20,7 +20,6 @@ const FormLogin: React.FC = () => {
       if(!result) console.log("lỗi")
       toast.success("Đăng nhập thành công");
       navigate("/"); 
-      console.log("USER:", result);
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Đăng nhập thất bại");
     }

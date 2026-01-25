@@ -1,44 +1,108 @@
-/* HEADER CONTAINER */
 .header-alta {
-  background: #ffffff !important;
-  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 88px;
   padding: 0 24px;
+  background-color: transparent; /* Hoặc #F6F6F6 tùy background chung */
+}
+
+/* Breadcrumb */
+.breadcrumb-wrapper {
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  gap: 12px;
 }
 
-
-/* Bell icon */
-.header-bell {
+.breadcrumb-item-parent {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
   font-size: 20px;
-  color: #ff9138;
-  cursor: pointer;
-}
-
-/* User text */
-.header-user {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.header-hello {
-  font-size: 12px;
+  line-height: 30px;
   color: #7E7D88;
 }
 
-.header-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #535261;
-}
-/* FORCE Header Alta trắng */
-.header-alta,
-.header-custom,
-.ant-layout-header.header-alta,
-.ant-layout-header.header-custom {
-  background: #ffffff !important;
-  color: #535261 !important;
+.breadcrumb-separator {
+  width: 16px;
+  height: 16px;
+ 
+  object-fit: contain; 
+  display: block;
 }
 
+.breadcrumb-item-active {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 30px;
+  color: #FF7506;
+}
+
+/* Right Section */
+.header-right {
+  display: flex;
+  align-items: center;
+margin-right: 30px;
+  gap: 24px;
+}
+
+.bell-icon-wrapper {
+  position: relative;
+  background: #FFF2E7;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.bell-icon {
+  color: #FF9138;
+  display: flex;
+}
+
+.bell-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #FF4D4F;
+  border-radius: 50%;
+  border: 1px solid white;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.hello-text {
+  font-size: 12px;
+  color: #7E7D88;
+  line-height: 18px;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #535261;
+  line-height: 24px;
+}

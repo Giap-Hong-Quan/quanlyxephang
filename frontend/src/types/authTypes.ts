@@ -16,11 +16,12 @@ export interface ProfileResponse{
   success:boolean,
   message: string,
   data: {
-    _id: String,
-    full_name: String,
-    email: String,
-    phone: String,
-    role: String,
-    status: String
+    _id: string,
+    full_name: string,
+    email: string,
+    phone: string,
+    role: string,
+    avatar_url:string,
+    status: string
   }
 }

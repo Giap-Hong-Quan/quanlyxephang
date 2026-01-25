@@ -6,6 +6,7 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 import AdminLayout from "../layouts/Layout";
 import ReportPage from "../pages/report/ReportPage";
 import AccountPage from "../pages/accounts/AccountPage";
+import Profile from "../pages/profile/Profile";
 
 // import DevicePage from "../pages/device/DevicePage";
 // import ServicePage from "../pages/service/ServicePage";
@@ -37,9 +38,10 @@ const router = createBrowserRouter(
             children: [
                 {
                     element: <AdminLayout />,
-                    children:[
+                    children:[  
                             { index: true, element: <Navigate to="/dashboard" /> },
                             { path: "dashboard", element: <DashboardPage /> },
+                             { path: "profile", element: <Profile /> },
                             {
                                 path: "devices",
                                 children: [
@@ -65,7 +67,7 @@ const router = createBrowserRouter(
                                 ]
                             },
                             { path: "reports", element: <ReportPage /> },
-                             { path: "users",
+                            { path: "users",
                                   children:[
                                     // {index:true,  element: <AccountPage /> },
                                     //{path:"create",element:<CreateAccount/>},

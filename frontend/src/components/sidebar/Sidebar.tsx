@@ -18,12 +18,6 @@ const Sidebar = () => {
         key:menu.label,
         icon:menu.icon?<menu.icon/>:undefined,
         label:menu.label,
-        children:menu.children.map((sub)=>(
-          {
-           key: sub.path!,
-            label:sub.label
-          }
-        ))
       }
     }
     return {

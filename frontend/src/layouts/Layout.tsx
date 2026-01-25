@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/sidebar/Sidebar";
 import HeaderAlta from "../components/header/Header";
 
+
 const { Content } = Layout;
 
 const AdminLayout = () => {
@@ -13,7 +14,7 @@ const AdminLayout = () => {
 
       {/* Right layout */}
       <Layout>
-        <HeaderAlta />
+        <HeaderAlta parentTitle="Thiết bị" currentTitle="Danh sách thiết bị"   />
         <Content  style={{
                     padding: 24,
                     background: "#f6f6f6",
