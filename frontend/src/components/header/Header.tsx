@@ -26,7 +26,7 @@ const HeaderAlta: React.FC = () => {
     setprofile(res)
     console.log(res)
   }catch (error: any) {
-        toast.error(error?.response?.data?.message || "Lấy dữ liệu cá nhân thất bại");
+        toast.error(error?.response?.data?.message);
       }
   }
   useEffect(()=>{

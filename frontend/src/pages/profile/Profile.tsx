@@ -17,6 +17,19 @@ const Profile = () => {
   useEffect(()=>{
     handleGetProfile()
   },[])
+  let displayRole = "";
+
+switch (profile?.data.role.name) {
+  case "admin":
+    displayRole = "Quản trị viên";
+    break;
+  case "staff":
+    displayRole = "Nhân viên cấp gọi số";
+    break;
+    case "docter":
+    displayRole = "Bác sĩ";
+    break;
+}
   return (
     <div>
      <div className='profile-container'>
@@ -52,7 +65,9 @@ const Profile = () => {
         
                 <div className='profile-col-center-group'>
                     <label className='profile-col-label'>Vai trò</label>
-                    <p className='profile-col-input'>{profile?.data.role.name}</p>
+                    <p className='profile-col-input'>{ 
+                      displayRole
+                            }</p>
                 </div>
             
             </div>
