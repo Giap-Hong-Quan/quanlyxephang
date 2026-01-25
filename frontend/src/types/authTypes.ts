@@ -19,8 +19,11 @@ export interface ProfileResponse{
     _id: string,
     full_name: string,
     email: string,
-    phone: string,
-    role: string,
+    username: string,
+    role: {
+      _id:string,
+      name:string
+    },
     avatar_url:string,
     status: string
   }

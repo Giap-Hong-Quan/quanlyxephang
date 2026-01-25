@@ -5,7 +5,7 @@ import nextIcon from '../../assets/icon/next.svg';
 import { getProfile } from '../../services/authService';
 import { toast } from 'sonner';
 import { ProfileResponse } from '../../types/authTypes';
-import { useLocation, useMatches, useNavigate } from 'react-router-dom';
+import { useMatches, useNavigate } from 'react-router-dom';
 // Định nghĩa kiểu dữ liệu cho Props
 interface RouteHandle {
   parent?: string;
@@ -13,13 +13,11 @@ interface RouteHandle {
 }
 
 const HeaderAlta: React.FC = () => {
-  const location = useLocation();
   const matches = useMatches();
   // Tìm handle của route hiện tại
   // Chúng ta lấy match cuối cùng có chứa dữ liệu handle
   const currentMatch = [...matches].reverse().find((m) => m.handle);
   const titleData = currentMatch?.handle as RouteHandle | undefined;
-  
   const [profile,setprofile]=useState<ProfileResponse>()
   const navigate=useNavigate()
   const handleGetProfile =async()=>{
