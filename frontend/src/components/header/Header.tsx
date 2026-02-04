@@ -26,7 +26,7 @@ const HeaderAlta: React.FC = () => {
     setprofile(res)
     console.log(res)
   }catch (error: any) {
-        toast.error(error?.response?.data?.message);
+       console.error(error?.response?.data?.message);
       }
   }
   useEffect(()=>{

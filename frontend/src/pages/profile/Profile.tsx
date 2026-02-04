@@ -11,7 +11,7 @@ const Profile = () => {
     setprofile(res)
     console.log(res)
   }catch (error: any) {
-        toast.error(error?.response?.data?.message || "Lấy dữ liệu cá nhân thất bại");
+        console.error(error?.response?.data?.message);
       }
   }
   useEffect(()=>{
@@ -30,6 +30,7 @@ switch (profile?.data.role.name) {
     displayRole = "Bác sĩ";
     break;
 }
+// if(!profile)return <div>is Loading</div>
   return (
     <div>
      <div className='profile-container'>
