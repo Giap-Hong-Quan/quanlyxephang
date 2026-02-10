@@ -22,7 +22,7 @@ export const loginService =async ({email,password})=>{
     await user.save();
      //dung io.emit để gửi sự kiên đến client
    if (needEmit) {
-    io.emit("user_isActive_change", {
+    io.emit("user_login", {
         userId: user._id,
         isActive: true
     });
@@ -158,9 +158,13 @@ export const resetPasswordService =async (token,newPassword)=>{
 export const logoutService = async (userId) => {
     const user = await User.findById(userId)
     if(!user) throw new ApiError(404,"Tài khoản Không tồn tại");
-    if(user.status !== "active"){
+    if(user.isActive !==true ){
         throw new ApiError(404,"Tài khoản chưa đăng nhập");
     }
-    user.status = "inactive"
+    user.isActive = false;
     await user.save();
+    io.emit("user_logout", {
+        userId: user._id,
+        isActive: false
+    });
 };

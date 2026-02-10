@@ -31,8 +31,8 @@ import { uploadToCloudinary } from "../utils/uploadCloudinary.js";
 // }
 
 //create user
-export const createUserService =async ({username,full_name, email, password, role},file)=>{
-    const user = await User.findOne({$or: [{ username }, { email }]});
+export const createUserService =async ({full_name, email,phone, password, role},file)=>{
+    const user = await User.findOne( { email });
     if (user) {
         throw new ApiError(409, "Tên hoặc Email này đã tồn tại");
     }
@@ -45,12 +45,11 @@ export const createUserService =async ({username,full_name, email, password, rol
     }
     //  Tạo user mới
     const newUser=await User.create({
-        username,
         full_name,
         email,
+        phone,
         password: hashedPassword,
         role,
-        status: "inactive", 
         avatar_url:avatarUrl
     });
 const userResponse = newUser.toObject();

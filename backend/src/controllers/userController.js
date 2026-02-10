@@ -4,15 +4,15 @@ import { success } from "../utils/success.js";
 //create user controller
 export const createUserController =async(req,res,next)=>{
     try {
-        const {username,full_name, email, password, role} = req.body;
+        const {full_name, email,phone, password, role} = req.body;
         const file =req.file
-        if (!username ||!full_name|| !email || !password || !role) {
+        if (!full_name|| !email ||!phone|| !password || !role) {
             return res.status(400).json({message:"Vui lòng nhập đầy đủ"})
         }
         if (!file) {
             return res.status(400).json({ message: "Vui lòng chọn ảnh đại diện" });
         }
-        const result =await createUserService({username,full_name, email, password, role },file);
+        const result =await createUserService({full_name, email,phone, password, role },file);
         return success(res,result,"Đăng ký thành công",201);
     } catch (error) {
         next(error);

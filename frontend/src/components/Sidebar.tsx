@@ -8,8 +8,13 @@ import QueueIcon from "../assets/icon/queue.svg"
 import ReportIcon from "../assets/icon/report.svg"
 import SettingIcon from "../assets/icon/setting.svg"
 import LogoutIcon from "../assets/icon/logout.svg"
+import { useUserSocket } from '../hooks/useUserSocket'
+import { useLogout } from '../hooks/authQuery'
 const Sidebar = () => {
-    const location = useLocation(); // Lấy thông tin URL hiện tại
+    const location = useLocation();
+    useUserSocket();
+    const logout = useLogout();
+     // Lấy thông tin URL hiện tại
     const MENU=[
         {icon:DashboardIcon,name:"Tổng quan",path:"/dashboard"},
         {icon:DeviceIcon,name:"Thiết bị",path:"/devices"},
@@ -61,7 +66,7 @@ const Sidebar = () => {
                 
             </nav>
         </div>
-            <button className='flex gap-2 mb-6 py-3 w-[80%] justify-center mx-auto  font-semibold text-[#FF7506] rounded-lg bg-[#FFF2E7]'><img src={LogoutIcon} alt="" /> Đăng xuất</button>
+            <button onClick={() => logout.mutate()}className='flex cursor-pointer hover:scale-[1.02] gap-2 mb-6 py-3 w-[80%] justify-center  mx-auto  font-semibold text-[#FF7506] rounded-lg bg-[#FFF2E7] '><img src={LogoutIcon} alt="" /> Đăng xuất</button>
     </aside>
   )
 }

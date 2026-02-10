@@ -6,9 +6,12 @@ const AdminLayout = () => {
   return (
   <div className="flex bg-[#DBDBDB80]">
     <Sidebar/>
-    <div className="w-full px-4">
+    <div className="w-full pl-4">
       <Header/>
-      <Outlet/>
+      <div className="pt-5">
+
+      <Outlet  />
+      </div>
     </div>
   </div>
   );

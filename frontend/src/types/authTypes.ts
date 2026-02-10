@@ -25,6 +25,11 @@ export interface ProfileResponse{
       name:string
     },
     avatar_url:string,
-    status: string
+    isActive: string
   }
+}
+// res logout 
+export interface LogoutResponse{
+  success:string,
+  message:string,
 }

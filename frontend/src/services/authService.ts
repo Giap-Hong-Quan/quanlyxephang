@@ -1,5 +1,5 @@
 
-import type { LoginRequest, LoginResponse, ProfileResponse } from "../types/authTypes";
+import type { LoginRequest, LoginResponse, LogoutResponse, ProfileResponse } from "../types/authTypes";
 import apiClient from "./apiClient";
 // login 
 export const loginService = async ( data:LoginRequest) : Promise<LoginResponse> =>{
@@ -11,6 +11,12 @@ export const loginService = async ( data:LoginRequest) : Promise<LoginResponse> 
 //get profile
 export const getProfile =async()=>{
 const result =await apiClient.get<ProfileResponse>("/auth/profile");
+console.log(result.data)
+    return result.data;
+}
+//get profile
+export const logoutService =async()=>{
+const result =await apiClient.post<LogoutResponse>("/auth/logout");
 console.log(result.data)
     return result.data;
 }
