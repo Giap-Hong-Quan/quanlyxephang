@@ -1,7 +1,8 @@
-import { LoginRequset, LoginResponse, ProfileResponse } from "../types/authTypes";
+
+import type { LoginRequest, LoginResponse, ProfileResponse } from "../types/authTypes";
 import apiClient from "./apiClient";
 // login 
-export const loginService = async ( data:LoginRequset) : Promise<LoginResponse> =>{
+export const loginService = async ( data:LoginRequest) : Promise<LoginResponse> =>{
     const result =await apiClient.post<LoginResponse>("/auth/login",data);
     const token = result.data.data.accessToken;
     localStorage.setItem("token",token);

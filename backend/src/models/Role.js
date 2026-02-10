@@ -8,6 +8,11 @@ const roleSchema =new mongoose.Schema(
             unique:true,
             trim:true,
         },
+        description: String,
+        isSystem: {           // true thì role đó k đc xóa sửa 
+            type: Boolean,
+            default: false 
+        }
     },
     {
         timestamps:true,versionKey:false

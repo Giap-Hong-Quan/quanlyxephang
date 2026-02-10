@@ -1,30 +1,16 @@
-import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/sidebar/Sidebar";
-import HeaderAlta from "../components/header/Header";
-
-
-const { Content } = Layout;
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 
 const AdminLayout = () => {
   return (
-    <Layout style={{ height: "100vh", overflow: "hidden"  }}>
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Right layout */}
-      <Layout>
-        <HeaderAlta   />
-        <Content  style={{
-                    padding: 24,
-                    background: "#f6f6f6",
-                    overflowY: "auto",
-                    flex: 1,
-                  }}>
-          <Outlet />
-        </Content>
-      </Layout>
-    </Layout>
+  <div className="flex bg-[#DBDBDB80]">
+    <Sidebar/>
+    <div className="w-full px-4">
+      <Header/>
+      <Outlet/>
+    </div>
+  </div>
   );
 };
 

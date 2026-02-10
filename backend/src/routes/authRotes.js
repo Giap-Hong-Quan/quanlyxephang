@@ -1,6 +1,7 @@
 import express from 'express';
 import { forgotPasswordController, getProfileController, loginController, logoutController, resetPasswordController } from '../controllers/authController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
+import { loginLimiter } from '../middlewares/rateLimit.js';
 
 const authRouter = express.Router();
 /**
@@ -67,7 +68,7 @@ const authRouter = express.Router();
  *       500:
  *         description: Lỗi server
  */
-authRouter.post('/login',loginController)
+authRouter.post('/login',loginLimiter,loginController)
 /**
  * @openapi
  * /api/auth/forgot-password:

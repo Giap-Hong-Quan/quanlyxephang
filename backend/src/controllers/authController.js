@@ -1,13 +1,11 @@
 import { forgotPasswordService, loginService, logoutService, resetPasswordService } from "../services/authService.js"
 import { success } from "../utils/success.js";
+import { loginSchema } from "../validators/loginValidator.js";
 // login controller
 export const loginController = async (req,res,next)=>{
     try {
-        const {username,password}=req.body;
-        if(!username||!password){
-            return res.status(400).json({message:"Vui lòng nhập đầy đủ"})
-        }
-        const result=await loginService(username,password);
+        const validator = loginSchema.parse(req.body)
+        const result=await loginService(validator);
         return success(res,result,"Đăng nhập thành công",200)
     } catch (error) {
         next(error)

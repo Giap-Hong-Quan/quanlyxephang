@@ -8,9 +8,9 @@ const seedData = async () => {
         if (userCount > 0) return; 
 
         const roleData = [
-            { name: "admin" },
-            { name: "staff" },
-            { name: "doctor" } // Sửa lỗi typo docter -> doctor
+            { name: "admin",description:"Quản trị toàn bộ hệ thống, bao gồm thống kê, thiết bị, dịch vụ, cấp số, Cài đặt hệ thống" },
+            { name: "staff",description:"Nhân viên hổ trợ tại quầy, bao gồm thống kê, cấp số, gọi số,danh sách số đã cấp, xử lý thông tin khách hàng và theo dõi trạng thái xếp hàng"},
+            { name: "doctor",description:"Bác sĩ tiếp nhận và phục vụ khách theo số thứ tự, xem danh sách số đã cấp ,cấp nhật trạng thái sau khi khám " } // Sửa lỗi typo docter -> doctor
         ];
 
         let adminRoleId = null;
@@ -19,7 +19,7 @@ const seedData = async () => {
         const roles = await Promise.all(roleData.map(async (role) => {
             let exist = await Role.findOne({ name: role.name });
             if (!exist) {
-                return await Role.create({ name: role.name });
+                return await Role.create({ name: role.name,description:role.description});
             }
             return exist;
         }));
@@ -31,11 +31,12 @@ const seedData = async () => {
         const adminExists = await User.findOne({ email: "admin@gmail.com" });
         if (!adminExists) {
             await User.create({
-                username: "admin",
                 full_name: "admin",
                 email: "admin@gmail.com",
+                phone:"0335906807",
                 password: hashPassword("admin"),
                 role: adminRoleId,
+                lastLogin:new Date(),
                 avatar_url: ""
             });
             console.log(" Admin created: admin@gmail.com / admin");

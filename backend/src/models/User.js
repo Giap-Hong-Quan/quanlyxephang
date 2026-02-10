@@ -1,13 +1,8 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userSchema = new mongoose.Schema(
     {
-        username:{
-            type:String,
-            required:true,  
-            unique: true,
-            trim:true,
-        },
         full_name:{
             type:String,
             required:true,
@@ -20,7 +15,12 @@ const userSchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
         },
-          password: {
+        phone: { 
+            type: String,
+            trim: true ,
+            default:null
+        },
+        password: {
             type: String,
             required: true,
         },
@@ -33,10 +33,13 @@ const userSchema = new mongoose.Schema(
             ref: "Role", 
             required: true,
         },
-        status: {
-            type: String,
-            enum: ["active", "inactive"],
-            default: "inactive",
+        lastLogin:{
+            type:Date,
+            default:null
+        },
+        isActive: {
+            type: Boolean,
+            default: false,
         },
         reset_token: { type: String, default: null },
         reset_token_expires: { type: Date, default: null },

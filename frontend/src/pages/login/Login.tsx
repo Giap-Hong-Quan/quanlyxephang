@@ -1,5 +1,5 @@
 import React from 'react';
-import FormLogin from '../../components/loginform/FormLogin';
+import FormLogin from '../../components/FormLogin';
 import './login.css';
 import anh2login from '../../assets/image/image1.png'; 
 import logo from '../../assets/image/logoalta.png';

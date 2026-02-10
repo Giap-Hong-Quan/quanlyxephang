@@ -3,18 +3,30 @@ import ApiError from "../exceptions/ApiError.js";
 import User from "../models/User.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { sendEmail } from './sendEmail.js';
+import { io } from '../socket.js';
 import { signAccessToken } from '../utils/jwt.js';
+
 //1:login
-export const loginService =async (username,password)=>{
-    const user = await User.findOne({username}).populate("role"," name");
-    if(!user) throw new ApiError(404,"Tên đăng nhập Không tồn tại");
+export const loginService =async ({email,password})=>{
+    const user = await User.findOne({email}).populate("role"," name");
+    if(!user) throw new ApiError(404,"Email Không tồn tại");
     const ok  =await comparePassword(password,user.password)
-    if(!ok) throw new ApiError(404,"Mật khẩu không hợp lệ");
+    if(!ok) throw new ApiError(401,"Mật khẩu không hợp lệ");
     //  Nếu user inactive → kích hoạt
-    if (user.status === "inactive") {
-        user.status = "active";
-        await user.save();
+    let needEmit = false;    // chỉ khi chuyển false thành true
+    if (user.isActive===false) {
+        user.isActive = true;
+        needEmit = true;
     }
+     user.lastLogin = new Date();
+    await user.save();
+     //dung io.emit để gửi sự kiên đến client
+   if (needEmit) {
+    io.emit("user_isActive_change", {
+        userId: user._id,
+        isActive: true
+    });
+}
     // Tạo Access Token
     const access = signAccessToken({
         id:user._id,
@@ -24,6 +36,15 @@ export const loginService =async (username,password)=>{
     // Trả về FE
     return {
         accessToken: access,
+        user: {
+            id: user._id,
+            full_name: user.full_name,
+            email: user.email,
+            role: user.role.name,
+            avatar_url: user.avatar_url,
+            isActive: user.isActive,
+            lastLogin: user.lastLogin
+        }
     }
 }
 //forgot_password

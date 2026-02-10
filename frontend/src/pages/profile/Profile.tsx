@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from 'react'
+// import React, { useEffect, useState } from 'react'
+import { useEffect } from "react";
+import { useProfile } from "../../hooks/authQuery"
 import "./profile.css"
-import { ProfileResponse } from '../../types/authTypes'
-import { getProfile } from '../../services/authService'
-import { toast } from 'sonner'
+import { useHeaderStore } from "../../store/useHeaderStore";
+// import { ProfileResponse } from '../../types/authTypes'
+// import { getProfile } from '../../services/authService'
+// import { toast } from 'sonner'
 const Profile = () => {
-      const [profile,setprofile]=useState<ProfileResponse>()
-      const handleGetProfile =async()=>{
-  try {
-    const res= await getProfile();
-    setprofile(res)
-    console.log(res)
-  }catch (error: any) {
-        console.error(error?.response?.data?.message);
-      }
-  }
-  useEffect(()=>{
-    handleGetProfile()
-  },[])
+    useEffect(() => {
+           useHeaderStore.setState({title:"Thông tin cá nhân",subTitle:""})
+          }, []);
+    const {data,isLoading,error} =useProfile();
+  
+
+    console.log(data)
   let displayRole = "";
 
-switch (profile?.data.role.name) {
+switch (data?.data.role.name) {
   case "admin":
     displayRole = "Quản trị viên";
     break;
@@ -30,18 +27,17 @@ switch (profile?.data.role.name) {
     displayRole = "Bác sĩ";
     break;
 }
-// if(!profile)return <div>is Loading</div>
+  if (isLoading) return <p>Loading...</p>;
+    if (error) return <p>Error</p>;
   return (
     <div>
      <div className='profile-container'>
     <div className='profile-row'>
         {/* Cột trái: Avatar & Tên */}
         <div className='profile-col-left'>
-            <div className='avatar-wrapper'>
-                <img src={profile?.data.avatar_url} alt="avatar" />
-               
+            <div className='avatar-wrapper '>
+                <img src={data?.data.avatar_url} alt="avatar" />
             </div>
-            <h2>{profile?.data.full_name}</h2>
         </div>
 
         {/* Cột phải: Chứa 2 cụm thông tin */}
@@ -49,19 +45,19 @@ switch (profile?.data.role.name) {
             <div className='profile-col-center'>
                 <div className='profile-col-center-group'>
                     <label className='profile-col-label'>Tên người dùng</label>
-                    <p className='profile-col-input'>{profile?.data.full_name}</p>
+                    <p className='profile-col-input'>{data?.data.full_name}</p>
                 </div>
                 <div className='profile-col-center-group'>
                     <label className='profile-col-label'>Email</label>
-                    <p className='profile-col-input'>{profile?.data.email}</p>
+                    <p className='profile-col-input'>{data?.data.email}</p>
                 </div>
           
             </div>
             <div className='profile-col-right'>
                             <div className='profile-col-center'>
                 <div className='profile-col-center-group'>
-                    <label className='profile-col-label'>Tên đăng nhập</label>
-                    <p className='profile-col-input'>{profile?.data.username}</p>
+                    <label className='profile-col-label'>Số điện thoại</label>
+                    <p className='profile-col-input'>{data?.data?.phone}</p>
                 </div>
         
                 <div className='profile-col-center-group'>
@@ -79,5 +75,4 @@ switch (profile?.data.role.name) {
     </div>
   )
 }
-
 export default Profile

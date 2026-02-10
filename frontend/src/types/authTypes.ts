@@ -7,8 +7,8 @@ export interface LoginResponse {
   }
 }
 // resquest login
-export interface LoginRequset {
-    username:string,
+export interface LoginRequest {
+    email:string,
     password:string
 }
 //response get profile
@@ -19,7 +19,7 @@ export interface ProfileResponse{
     _id: string,
     full_name: string,
     email: string,
-    username: string,
+    phone: string,
     role: {
       _id:string,
       name:string
