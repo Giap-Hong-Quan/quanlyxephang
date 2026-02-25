@@ -74,7 +74,7 @@ const UserPage = () => {
         </div>
         </div>
         <div className='flex-[7%] flex items-center'>
-        <button className=' text-[#FF7506] font-medium bg-[#FFF2E7] justify-center items-center border p-3 h-fit flex flex-col'>
+        <button className=' text-[#FF7506] font-medium bg-[#FFF2E7] justify-center items-center rounded-l-2xl  p-3 h-fit flex flex-col'>
           <CirclePlus className='' />
           Thêm tài khoản
         </button>

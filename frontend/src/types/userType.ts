@@ -13,8 +13,8 @@ export interface User {
 }
 export interface UserListData {
   users: User[];        // Đây mới là nơi chứa mảng users
-currentPage:number,
-limit:number,
-totalPages:number,
-totalUsers:number,
+    currentPage:number,
+    limit:number,
+    totalPages:number,
+    totalUsers:number,
 }

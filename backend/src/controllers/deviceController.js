@@ -1,24 +1,12 @@
 import Device from "../models/Device.js";
 import { createDeviceService, deleteDeviceService, getAllDeviceService, getDeviceByIdService, updateDeviceService } from "../services/deviceService.js";
 import { success } from "../utils/success.js";
+import { createDeviceSchema } from "../validators/deviceValidator.js";
 
 export const createDeviceController = async (req, res, next) => {
     try {
-        const { device_code, device_name, ip_address, status } = req.body;
-        //  Check trống (Bad Request)
-        if (!device_code || !device_name || !ip_address) {
-            return res.status(400).json({ 
-                message: "Vui lòng nhập đầy đủ " 
-            });
-        }
-        // Check định dạng IP bằng Regex (giống trong Model để báo lỗi sớm)
-        const ipRegex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
-        if (!ipRegex.test(ip_address)) {
-            return res.status(400).json({ 
-                message: "Định dạng địa chỉ IP không hợp lệ" 
-            });
-        }
-        const result = await createDeviceService({ device_code, device_name, ip_address, status });
+         const validator = createDeviceSchema.parse(req.body) 
+        const result = await createDeviceService(validator);
         success(res, result, "Thêm thiết bị thành công", 201);
     } catch (error) { next(error); }
 };

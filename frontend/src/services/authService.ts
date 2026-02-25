@@ -4,8 +4,6 @@ import apiClient from "./apiClient";
 // login 
 export const loginService = async ( data:LoginRequest) : Promise<LoginResponse> =>{
     const result =await apiClient.post<LoginResponse>("/auth/login",data);
-    const token = result.data.data.accessToken;
-    localStorage.setItem("token",token);
     return result.data;
 }
 //get profile

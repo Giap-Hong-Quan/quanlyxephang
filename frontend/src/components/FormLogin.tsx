@@ -1,11 +1,8 @@
 import { useState } from "react"
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/authQuery";
-import { queryClient } from "../libs/queryClient";
 const FormLogin = () => {
   // Khởi tạo điều hiếu của router-dom
-  const navigate =useNavigate();
   // gọi reactQuery của api login 
   const loginMutation=useLogin();
   // khai báo trang thái
@@ -16,9 +13,6 @@ const FormLogin = () => {
     e.preventDefault();
     try {
         await loginMutation.mutateAsync({email,password});
-        queryClient.invalidateQueries({queryKey:["profile"]});
-        toast.success("Đăng nhập thành công");
-        navigate("/"); 
     } catch (error:any) {
       toast.error(error.response?.data?.message || "Đăng nhập thất bại");
     }

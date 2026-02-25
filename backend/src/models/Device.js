@@ -21,10 +21,9 @@ const deviceSchema = new mongoose.Schema(
                 "Địa chỉ IP không hợp lệ"
             ]
         },
-        status: {
-            type: String,
-            enum: ["active", "inactive"],
-            default: "inactive"
+        isActive: {
+            type: Boolean,
+            default: true
         }
     },
     {timestamps:true,versionKey:false}
