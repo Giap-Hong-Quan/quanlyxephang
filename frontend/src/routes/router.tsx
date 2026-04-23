@@ -11,6 +11,7 @@ import ReportPage from "../pages/report/ReportPage";
 import UserPage from "../pages/setting/users/UserPage";
 import LogPage from "../pages/setting/log/LogPage";
 import Profile from "../pages/profile/Profile";
+import AddDevicePage from "../pages/device/AddDevicePage";
 // import DashboardPage from "../pages/dashboard/DashboardPage";
 // import AdminLayout from "../layouts/Layout";
 // import ReportPage from "../pages/report/ReportPage";
@@ -36,7 +37,7 @@ const router = createBrowserRouter(
                                 path: "devices",
                                 children: [
                                      { index: true, element: <DevicePage />},       
-                                    // { path: "create", element: <CreateDevice /> }, 
+                                    { path: "create", element: <AddDevicePage /> }, 
                                     // {path: "detail", element: <DetailDevice />},
                                     // {path: "update", element: <UpdateDevice />}
                                 ],

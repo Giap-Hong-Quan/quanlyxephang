@@ -2,8 +2,10 @@ import React, { useEffect } from 'react'
 import { useHeaderStore } from '../../store/useHeaderStore';
 import { useDeleteDeviceQuery, useGetAllDeviceQuery } from '../../hooks/deviceQuery';
 import { CirclePlus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const DevicePage = () => {
+  const navigate=useNavigate();
     useEffect(() => {
      useHeaderStore.setState({title:"Thiết bị",subTitle:"Danh sách thiết bị"})
     }, []);
@@ -74,7 +76,7 @@ const DevicePage = () => {
         </div>
         </div>
         <div className='flex-[7%] flex items-center'>
-        <button className=' text-[#FF7506] font-medium bg-[#FFF2E7] justify-center items-center rounded-l-2xl  p-3 h-fit flex flex-col'>
+        <button onClick={()=>navigate("/devices/create")} className=' text-[#FF7506] font-medium bg-[#FFF2E7] justify-center items-center rounded-l-2xl  p-3 h-fit flex flex-col'>
           <CirclePlus className='' />
           Thêm tài khoản
         </button>
