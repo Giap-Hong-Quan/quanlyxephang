@@ -6,6 +6,7 @@ export const createDeviceSchema =z.object({
             /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/,
             "IP không hợp lệ"
         ),
+    status: z.string().optional()
 })
 
 export const updateDeviceSchema =z.object({
@@ -18,6 +19,6 @@ export const updateDeviceSchema =z.object({
                 "IP không hợp lệ"
             )
             .optional(),
-        isActive: z.boolean().optional()
+        status: z.string().optional()
 
 })

@@ -1,14 +1,20 @@
 export interface Device {
-    _id: string,
-    device_code: string,
-    device_name: string,
-    ip_address:string,
-isActive:boolean
+  _id: string,
+  device_code: string,
+  device_name: string,
+  ip_address: string,
+  status: string
 }
 export interface DeviceListData {
-  devices: Device[];        // Đây mới là nơi chứa mảng users
-    currentPage:number,
-    limit:number,
-    totalPages:number,
-    totalDevices:number,
+  devices: Device[];     
+  currentPage: number,
+  limit: number,
+  totalPages: number,
+  totalDevices: number,
+}
+export interface DeviceParams {
+  status?: string,
+  search?: string,
+  page: number
+  pageSize: number
 }

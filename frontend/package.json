@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.20",
+    "antd": "^6.3.6",
     "axios": "^1.13.4",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
@@ -20,6 +21,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
+    "react-spinners": "^0.17.0",
     "recharts": "^3.7.0",
     "socket.io-client": "^4.8.3",
     "sonner": "^2.0.7",

@@ -27,7 +27,6 @@ export const getAllServiceItemsService = async (page = 1, pageSize = 10, filter 
             { service_name: { $regex: search, $options: "i" } }
         ];
     }
-
     const [services, count] = await Promise.all([
         Service.find(query)
             .sort({ createdAt: -1 })

@@ -4,16 +4,15 @@ import Header from "../components/Header";
 
 const AdminLayout = () => {
   return (
-  <div className="flex bg-[#DBDBDB80]">
-    <Sidebar/>
-    <div className="w-full pl-4">
-      <Header/>
-      <div className="pt-5">
-
-      <Outlet  />
+    <div className="flex h-screen bg-[#DBDBDB80] overflow-hidden">
+      <Sidebar />
+      <div className="flex flex-col flex-1 min-w-0 pl-3">
+        <Header />
+        <div className="flex-1 overflow-y-auto pt-5">
+          <Outlet />
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 

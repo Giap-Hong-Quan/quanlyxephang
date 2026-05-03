@@ -26,3 +26,12 @@ export const verifyToken = async (req, res, next) => {
         next(error);
     }
 };
+export const authorizeRole = (...allowedRoles) => {
+    return (req, res, next) => {
+        const userRole = req.user?.role?.name;
+        if (!allowedRoles.includes(userRole)) {
+            return next(new ApiError(403, "Bạn không có quyền thực hiện hành động này"));
+        }
+        next();
+    };
+};

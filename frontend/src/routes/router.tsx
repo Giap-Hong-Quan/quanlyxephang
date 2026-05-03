@@ -12,73 +12,72 @@ import UserPage from "../pages/setting/users/UserPage";
 import LogPage from "../pages/setting/log/LogPage";
 import Profile from "../pages/profile/Profile";
 import AddDevicePage from "../pages/device/AddDevicePage";
-// import DashboardPage from "../pages/dashboard/DashboardPage";
-// import AdminLayout from "../layouts/Layout";
-// import ReportPage from "../pages/report/ReportPage";
-// // import Profile from "../pages/profile/Profile";
-// import DevicePage from "../pages/device/DevicePage";
-// import QueuePage from "../pages/queue/QueuePage";
-// import ServicePage from "../pages/service/ServicePage";
-// import UserPage from "../pages/users/UserPage";
+import UpdateDevicePage from "../pages/device/UpdateDevicePage";
+import UpdateServicePage from "../pages/service/UpdateServicePage";
+import CreateServicePage from "../pages/service/CreateServicePage";
 const router = createBrowserRouter(
-    [
-        {path:"/login",element:<Login/>},
+  [
+    { path: "/login", element: <Login /> },
+    {
+      path: "/",
+      element: <RequireAuth />,
+      children: [
         {
-            path: "/",
-            element: <RequireAuth />,
-            children: [
+          element: <AdminLayout />,
+          children: [
+            { index: true, element: <Navigate to="/dashboard" /> },
+            { path: "dashboard", element: <DashboardPage /> },
+            { path: "profile", element: <Profile /> },
+            {
+              path: "devices",
+              children: [
+                { index: true, element: <DevicePage /> },
+                { path: "create", element: <AddDevicePage /> },
+                // {path: "detail", element: <DetailDevice />},
+                { path: "update/:id", element: <UpdateDevicePage /> }
+              ],
+            },
+            {
+              path: "services",
+              children: [
+                { index: true, element: <ServicePage /> },
+                { path: "create", element: <CreateServicePage /> },
+                { path: "update/:id", element: <UpdateServicePage /> },
+              ]
+            },
+            {
+              path: "queues",
+              children: [
+                { index: true, element: <QueuePage /> },
+                // { path: "create", element: <CreateQueue /> }, 
+                // { path: "detail", element: <DetailQueue /> }, 
+              ]
+            },
+            { path: "reports", element: <ReportPage /> },
+            {
+              path: "settings",
+              children: [
                 {
-                    element: <AdminLayout />,
-                    children:[  
-                            { index: true, element: <Navigate to="/dashboard" /> },
-                            { path: "dashboard", element: <DashboardPage /> },
-                            { path: "profile", element: <Profile /> },
-                            {
-                                path: "devices",
-                                children: [
-                                     { index: true, element: <DevicePage />},       
-                                    { path: "create", element: <AddDevicePage /> }, 
-                                    // {path: "detail", element: <DetailDevice />},
-                                    // {path: "update", element: <UpdateDevice />}
-                                ],
-                            },
-                            {   path: "services",
-                                children:[
-                                    {index: true,element: <ServicePage />},
-                                    // { path: "create", element: <CreateService /> }, 
-                                    // { path: "detail", element: <DetailService /> }, 
-                                    // { path: "update", element: <UpdateService /> }, 
-                                ]
-                            },
-                            { path: "queues",
-                                children:[
-                                    {index:true, element: <QueuePage />},
-                                    // { path: "create", element: <CreateQueue /> }, 
-                                    // { path: "detail", element: <DetailQueue /> }, 
-                                ]
-                            },
-                            { path: "reports", element: <ReportPage />},
-                            { path: "settings",
-                                children:[
-                                    {path:"users",
-                                        children:[
-                                            {index:true, element: <UserPage />},
-                                        ]
-                                    },
-                                    {path:"logs",
-                                        children:[
-                                            {index:true, element: <LogPage />},
-                                        ]
-                                    },
-                                   ]
-                            },
-                    ]
-                }
-            ]
-        },
-        // UNAUTHORIZED  and notfound
-        {path: "*",element: <NotFound />},
-    ]
+                  path: "users",
+                  children: [
+                    { index: true, element: <UserPage /> },
+                  ]
+                },
+                {
+                  path: "logs",
+                  children: [
+                    { index: true, element: <LogPage /> },
+                  ]
+                },
+              ]
+            },
+          ]
+        }
+      ]
+    },
+    // UNAUTHORIZED  and notfound
+    { path: "*", element: <NotFound /> },
+  ]
 )
 
 export default router;

@@ -29,7 +29,7 @@ const Sidebar = () => {
         }
     ]
   return (
-    <aside className='flex flex-col bg-white items-start justify-between h-screen w-[16%]'>
+    <aside className='flex flex-col bg-white items-start justify-between h-screen w-[14%]'>
         <div className='w-full' >
             <div className='w-full h-[35%] flex justify-center items-center'>
             <img src={logo} alt="" className='w-[40%] ' />
