@@ -1,4 +1,4 @@
-import { createQueueNumberService, deleteQueueNumberService, getAllQueueNumberService, getQueueNumberByIdService, updateQueueNumberService } from "../services/queueNumberService.js";
+import { createQueueNumberService, deleteQueueNumberService, getAllQueueNumberService, getQueueNumberByIdService, updateQueueNumberService, updateStatusQueueNumberService } from "../services/queueNumberService.js";
 import { success } from "../utils/success.js";
 
 export const createQueueNumberController =async(req,res,next)=>{
@@ -63,7 +63,7 @@ export const updateQueueNumberStatusController =async(req,res,next)=>{
                 message:"Vui lòng nhập trạng thái mới"
             })
         }       
-        const result = await updateQueueNumberStatusService(req.params.id, status)
+        const result = await updateStatusQueueNumberService(req.params.id, status)
         success(res,result,"Cập nhật trạng thái số thứ tự thành công",200)
     } catch (error) {
         next(error)

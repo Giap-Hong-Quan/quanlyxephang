@@ -1,6 +1,6 @@
 import express from 'express'
 import { createQueueNumberController, deleteQueueNumberController, getAllQueueNumberController, getQueueNumberByIdController, updateQueueNumberController, updateQueueNumberStatusController } from '../controllers/queueNumberController.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { authorizeRole, verifyToken } from '../middlewares/authMiddleware.js';
 const queueNumberRouter= express.Router();
 /**
  * @swagger
@@ -130,9 +130,9 @@ queueNumberRouter.post("/",verifyToken,createQueueNumberController)
  *         description: Lỗi server
  */
 
-queueNumberRouter.get("/:id",getQueueNumberByIdController)
-queueNumberRouter.get("/",getAllQueueNumberController)
-queueNumberRouter.put("/:id",verifyToken,updateQueueNumberController)
-queueNumberRouter.delete("/:id",verifyToken,deleteQueueNumberController)
-queueNumberRouter.put("/:id/status",verifyToken,updateQueueNumberStatusController)
+queueNumberRouter.get("/:id",verifyToken,getQueueNumberByIdController)
+queueNumberRouter.get("/",verifyToken,getAllQueueNumberController)
+queueNumberRouter.put("/:id",verifyToken,authorizeRole("admin"),updateQueueNumberController)
+queueNumberRouter.delete("/:id",verifyToken,authorizeRole("admin"),deleteQueueNumberController)
+queueNumberRouter.put("/:id/status",verifyToken,authorizeRole("admin","staff","doctor"),updateQueueNumberStatusController)
 export default queueNumberRouter

@@ -1,5 +1,5 @@
 import express from 'express'
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { authorizeRole, verifyToken } from '../middlewares/authMiddleware.js';
 import { createServiceController, deleteServiceController, getAllServiceController, getServiceByIdController, getServiceCountController, updateServiceController } from '../controllers/serviceController.js';
 const serviceRouter= express.Router();
 /**
@@ -42,7 +42,7 @@ const serviceRouter= express.Router();
  *         description: Mã hoặc Tên dịch vụ đã tồn tại
  */
 
-serviceRouter.post("/", verifyToken, createServiceController);
+serviceRouter.post("/", verifyToken, authorizeRole("admin"), createServiceController);
 /**
  * @swagger
  * /api/service/count:
@@ -168,7 +168,7 @@ serviceRouter.get("/:id", verifyToken, getServiceByIdController);
  *         description: Mã hoặc Tên dịch vụ đã tồn tại
  */
 
-serviceRouter.put("/:id", verifyToken, updateServiceController);
+serviceRouter.put("/:id", verifyToken, authorizeRole("admin"), updateServiceController);
 /**
  * @swagger
  * /api/service/{id}:
@@ -191,5 +191,5 @@ serviceRouter.put("/:id", verifyToken, updateServiceController);
  *         description: Không tìm thấy dịch vụ
  */
 
-serviceRouter.delete("/:id", verifyToken, deleteServiceController);
+serviceRouter.delete("/:id", verifyToken, authorizeRole("admin"), deleteServiceController);
 export default serviceRouter

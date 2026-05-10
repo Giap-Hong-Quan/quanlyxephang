@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { createQueueNumber, getAllQueueNumbers } from "../services/queueNumberService"
+import { createQueueNumber, getAllQueueNumbers, updateQueueNumberStatus } from "../services/queueNumberService"
+import { queryClient } from "../libs/queryClient"
 import type { queueNumber, queueParams } from "../types/queueNumber"
 import { toast } from "sonner"
 
@@ -22,5 +23,18 @@ export const useGetAllQueueNumbers = (params?: queueParams) => {
 		queryFn: async () => {	
 			return await getAllQueueNumbers(params);
 		},
+	})
+}
+export const useUpdateQueueNumberStatus = () => {
+	return useMutation({
+		mutationFn: async ({ id, status }: { id: string; status: string }) => updateQueueNumberStatus(id, status),
+		onSuccess: (response) => {
+			toast.success(response.message || "Cập nhật trạng thái thành công!")
+			queryClient.invalidateQueries({ queryKey: ["queueNumbers"] });
+		},
+		onError: (error: any) => {
+			toast.error(error.response?.data?.message || "Lỗi khi cập nhật trạng thái");
+			console.error("Lỗi khi cập nhật trạng thái số thứ tự:", error)
+		}
 	})
 }

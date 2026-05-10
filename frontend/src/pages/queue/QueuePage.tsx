@@ -7,13 +7,34 @@ import { useUI } from '../../context/UiProvider';
 import { data, useNavigate } from 'react-router-dom';
 import { STATUSQUEUE } from '../../constand/Enum';
 import { CirclePlus } from 'lucide-react';
-import { useGetAllQueueNumbers } from '../../hooks/useQueueNumberQuery';
+import { useGetAllQueueNumbers, useUpdateQueueNumberStatus } from '../../hooks/useQueueNumberQuery';
 import dayjs from 'dayjs';
 import type { ColumnType } from 'antd/es/table';
 import type { queueNumber } from '../../types/queueNumber';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, NotificationOutlined, CheckOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useProfile } from '../../hooks/authQuery';
 
 const QueuePage = () => {
+  const { data, isLoading } = useGetAllQueueNumbers()
+  const { data: profile } = useProfile();
+  const { mutate: updateStatus } = useUpdateQueueNumberStatus();
+  const navigate = useNavigate();
+  const { setLoading } = useUI();
+
+  useEffect(() => {
+    useHeaderStore.setState({ title: "Cấp số", subTitle: "Danh sách cấp số" })
+  }, []);
+
+  useEffect(() => {
+    setLoading(isLoading)
+  }, [isLoading])
+
+  const roleName = profile?.data?.role?.name || '';
+  console.log(roleName)
+  const isAdmin = roleName === 'admin';
+  const isStaff = roleName === 'staff';
+  const isDoctor = roleName === 'doctor';
+
   const columns: ColumnType<queueNumber>[] = [
     {
       title: 'Mã số',
@@ -84,26 +105,49 @@ const QueuePage = () => {
       title: 'Thao tác',
       render: (record: queueNumber) => {
         return (
-          <Tooltip title="Cập nhật">
-            <EditOutlined
-              onClick={() => navigate(`/queues/update/${record._id}`)}
-              className="text-green-600 text-2xl cursor-pointer"
-            />
-          </Tooltip>
+          <div className="flex gap-2 items-center">
+            {(isAdmin || isStaff) && record.status === 'waiting' && (
+              <Tooltip title="Gọi số">
+                <NotificationOutlined
+                  onClick={() => updateStatus({ id: record._id, status: 'processing' })}
+                  className="text-blue-600 text-xl cursor-pointer"
+                />
+              </Tooltip>
+            )}
+            {isDoctor && record.status === 'waiting' && (
+              <span className="text-gray-400 italic text-sm">Chờ gọi số</span>
+            )}
+            {(isAdmin || isDoctor) && record.status === 'processing' && (
+              <Tooltip title="Hoàn thành khám">
+                <CheckOutlined
+                  onClick={() => updateStatus({ id: record._id, status: 'completed' })}
+                  className="text-green-600 text-xl cursor-pointer"
+                />
+              </Tooltip>
+            )}
+            {(isAdmin || isStaff) && (record.status === 'waiting' || record.status === 'processing') && (
+              <Tooltip title="Bỏ qua">
+                <CloseCircleOutlined
+                  onClick={() => updateStatus({ id: record._id, status: 'skipped' })}
+                  className="text-red-600 text-xl cursor-pointer"
+                />
+              </Tooltip>
+            )}
+            {isAdmin && (
+              <Tooltip title="Cập nhật">
+                <EditOutlined
+                  onClick={() => navigate(`/queues/update/${record._id}`)}
+                  className="text-orange-600 text-xl cursor-pointer"
+                />
+              </Tooltip>
+            )}
+          </div>
         )
       }
     }
 
   ]
-  const navigate = useNavigate();
-  const { setLoading } = useUI();
-  useEffect(() => {
-    useHeaderStore.setState({ title: "Cấp số", subTitle: "Danh sách cấp số" })
-  }, []);
-  const { data, isLoading } = useGetAllQueueNumbers()
-  useEffect(() => {
-    setLoading(isLoading)
-  }, [isLoading])
+
   return (
     <div className='w-full'>
       <h2 className='text-2xl text-[#FF7506] font-bold'>Danh sách cấp số</h2>
@@ -157,11 +201,12 @@ const QueuePage = () => {
           </div>
         </div>
         <div className='flex-[7%] flex items-center'>
-          <button onClick={() => navigate("/queues/create")} className=' text-[#FF7506] font-medium bg-[#FFF2E7] justify-center items-center rounded-l-2xl  p-3 h-fit flex flex-col'>
-            <CirclePlus className='' />
-            Cấp số mới
-          </button>
-
+          {(profile?.data?.role?.name === 'admin' || profile?.data?.role?.name === 'staff') && (
+            <button onClick={() => navigate("/queues/create")} className=' text-[#FF7506] font-medium bg-[#FFF2E7] justify-center items-center rounded-l-2xl  p-3 h-fit flex flex-col'>
+              <CirclePlus className='' />
+              Cấp số mới
+            </button>
+          )}
         </div>
       </div>
 

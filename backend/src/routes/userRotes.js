@@ -1,7 +1,7 @@
 import express from 'express'
 import { upload } from '../middlewares/uploadMiddleware.js';
 import { createUserController, deleteUserController, getAllUserController, getUserByIdController, getUserCountController, updateUserController } from '../controllers/userController.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { authorizeRole, verifyToken } from '../middlewares/authMiddleware.js';
 const userRouter= express.Router();
 /**
  * @openapi
@@ -58,7 +58,7 @@ const userRouter= express.Router();
  *       409:
  *         description: Tên hoặc Email này đã tồn tại
  */
-userRouter.post('/',verifyToken,upload.single("avatar_url"),createUserController)
+userRouter.post('/',verifyToken,authorizeRole("admin"),upload.single("avatar_url"),createUserController)
 /**
  * @swagger
  * /api/user/count:
@@ -81,7 +81,7 @@ userRouter.post('/',verifyToken,upload.single("avatar_url"),createUserController
  *         description: Không có token hoặc token không hợp lệ
  */
 
-userRouter.get('/count',verifyToken,getUserCountController)
+userRouter.get('/count',verifyToken,authorizeRole("admin"),getUserCountController)
 /**
  * @openapi
  * /api/user:
@@ -186,7 +186,7 @@ userRouter.get('/count',verifyToken,getUserCountController)
  *       403:
  *         description: Không có quyền admin
  */
-userRouter.get('/',verifyToken,getAllUserController)
+userRouter.get('/',verifyToken,authorizeRole("admin"),getAllUserController)
 /**
  * @openapi
  * /api/user/{id}:
@@ -253,7 +253,7 @@ userRouter.get('/',verifyToken,getAllUserController)
  *       401:
  *         description: Chưa đăng nhập
  */
-userRouter.get('/:id',verifyToken,getUserByIdController)
+userRouter.get('/:id',verifyToken,authorizeRole("admin"),getUserByIdController)
 /**
  * @openapi
  * /api/user/{id}:
@@ -296,7 +296,7 @@ userRouter.get('/:id',verifyToken,getUserByIdController)
  *       403:
  *         description: Không có quyền admin
  */
-userRouter.delete('/:id',verifyToken,deleteUserController)
+userRouter.delete('/:id',verifyToken,authorizeRole("admin"),deleteUserController)
 /**
  * @openapi
  * /api/user/{id}:
@@ -399,5 +399,5 @@ userRouter.delete('/:id',verifyToken,deleteUserController)
  *       409:
  *         description: Username hoặc Email đã tồn tại
  */
-userRouter.put('/:id', verifyToken, upload.single("avatar_url"),updateUserController);
+userRouter.put('/:id', verifyToken, authorizeRole("admin"), upload.single("avatar_url"),updateUserController);
 export default userRouter;

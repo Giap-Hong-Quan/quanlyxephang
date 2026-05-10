@@ -12,3 +12,7 @@ export const getAllQueueNumbers =async (params?:queueParams) => {
 // export const getQueueNumberById = (id: string) => {
 //   return apiClient.get(`/queues/${id}`);
 // };
+export const updateQueueNumberStatus = async (id: string, status: string) => {
+  const res = await apiClient.put(`/queue/${id}/status`, { status });
+  return res.data;
+};

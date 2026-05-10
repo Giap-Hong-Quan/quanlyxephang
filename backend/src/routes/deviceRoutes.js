@@ -1,6 +1,6 @@
 import express from 'express';
 import { createDeviceController, deleteDeviceController, getAllDeviceController, getDeviceByIdController, getDeviceCountController, updateDeviceController } from '../controllers/deviceController.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { authorizeRole, verifyToken } from '../middlewares/authMiddleware.js';
 const deviceRouter = express.Router();
 /**
  * @openapi
@@ -46,7 +46,7 @@ const deviceRouter = express.Router();
  *       409:
  *         description: Mã thiết bị đã tồn tại
  */
-deviceRouter.post("/",verifyToken,createDeviceController)
+deviceRouter.post("/",verifyToken,authorizeRole("admin"),createDeviceController)
 /**
  * @swagger
  * /api/device/count:
@@ -257,7 +257,7 @@ deviceRouter.get("/:id",verifyToken,getDeviceByIdController)
  *       404:
  *         description: Không tìm thấy thiết bị
  */
-deviceRouter.delete("/:id",verifyToken,deleteDeviceController)
+deviceRouter.delete("/:id",verifyToken,authorizeRole("admin"),deleteDeviceController)
 /**
  * @openapi
  * /api/device/{id}:
@@ -346,6 +346,6 @@ deviceRouter.delete("/:id",verifyToken,deleteDeviceController)
  *       409:
  *         description: Mã thiết bị đã tồn tại
  */
-deviceRouter.put("/:id",verifyToken,updateDeviceController)
+deviceRouter.put("/:id",verifyToken,authorizeRole("admin"),updateDeviceController)
 
 export default deviceRouter;
