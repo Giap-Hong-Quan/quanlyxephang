@@ -1,5 +1,5 @@
 import express from 'express'
-import { createQueueNumberController, getQueueNumberByIdController } from '../controllers/queueNumberController.js';
+import { createQueueNumberController, deleteQueueNumberController, getAllQueueNumberController, getQueueNumberByIdController, updateQueueNumberController, updateQueueNumberStatusController } from '../controllers/queueNumberController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 const queueNumberRouter= express.Router();
 /**
@@ -131,5 +131,8 @@ queueNumberRouter.post("/",verifyToken,createQueueNumberController)
  */
 
 queueNumberRouter.get("/:id",getQueueNumberByIdController)
-
+queueNumberRouter.get("/",getAllQueueNumberController)
+queueNumberRouter.put("/:id",verifyToken,updateQueueNumberController)
+queueNumberRouter.delete("/:id",verifyToken,deleteQueueNumberController)
+queueNumberRouter.put("/:id/status",verifyToken,updateQueueNumberStatusController)
 export default queueNumberRouter

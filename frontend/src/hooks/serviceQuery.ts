@@ -5,7 +5,7 @@ import { deleteDeviceService, postDeviceService } from "../services/deviceServic
 import { toast } from "sonner";
 import { queryClient } from "../libs/queryClient";
 
-export const useGetAllServiceQuery = (params:ServiceParams)=>{
+export const useGetAllServiceQuery = (params?:ServiceParams)=>{
     return useQuery({
         queryKey:["getAllService",params],
         queryFn:async()=>{

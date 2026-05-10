@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { queryClient } from "../libs/queryClient"
 import type { Device, DeviceParams } from "../types/deviceTypes"
 
-export const useGetAllDeviceQuery = (params:DeviceParams) => {
+export const useGetAllDeviceQuery = (params?:DeviceParams) => {
   return useQuery({
     queryKey: ["getAllDevice", params],
     queryFn: async () => {

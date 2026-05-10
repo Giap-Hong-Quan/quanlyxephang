@@ -1,7 +1,7 @@
 import type { Service, ServiceParams } from "../types/seviceTypes"
 import apiClient from "./apiClient"
 
-export const getAllServiceService = async (params: ServiceParams) => {
+export const getAllServiceService = async (params?: ServiceParams) => {
 	const res = await apiClient.get("/service", { params });
 	return res.data.data;
 }

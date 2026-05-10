@@ -15,6 +15,8 @@ import AddDevicePage from "../pages/device/AddDevicePage";
 import UpdateDevicePage from "../pages/device/UpdateDevicePage";
 import UpdateServicePage from "../pages/service/UpdateServicePage";
 import CreateServicePage from "../pages/service/CreateServicePage";
+import CreateQueueNumber from "../pages/queue/CreateQueueNumber";
+import UpdateQUeueNumber from "../pages/queue/UpdateQUeueNumber";
 const router = createBrowserRouter(
   [
     { path: "/login", element: <Login /> },
@@ -49,8 +51,9 @@ const router = createBrowserRouter(
               path: "queues",
               children: [
                 { index: true, element: <QueuePage /> },
-                // { path: "create", element: <CreateQueue /> }, 
+                { path: "create", element: <CreateQueueNumber /> }, 
                 // { path: "detail", element: <DetailQueue /> }, 
+                {path : "update/:id", element: <UpdateQUeueNumber />  }
               ]
             },
             { path: "reports", element: <ReportPage /> },

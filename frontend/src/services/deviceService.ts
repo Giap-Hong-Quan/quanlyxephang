@@ -2,7 +2,7 @@ import type { ApiResponse } from "../types/ApiResponse";
 import type { Device, DeviceListData, DeviceParams } from "../types/deviceTypes";
 import apiClient from "./apiClient"
 
-export const getAllDeviceService = async (params:DeviceParams) => {
+export const getAllDeviceService = async (params?:DeviceParams) => {
     const res = await apiClient.get<ApiResponse<DeviceListData>>('/device', {params});
     return res.data.data;
 }
