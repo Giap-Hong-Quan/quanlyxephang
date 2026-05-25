@@ -23,6 +23,7 @@ const ReportPage = () => {
   }, []);
 
   const { data, isLoading } = useGetAllQueueNumbers({
+     page: 1,
     fromDate: dateRange ? dateRange[0] : undefined,
     toDate: dateRange ? dateRange[1] : undefined,
     pageSize: 1000 // Get all for report or just rely on backend ignoring page size if not passed? Wait, we passed pageSize 10 in backend by default. We should probably pass a large pageSize for report export.
