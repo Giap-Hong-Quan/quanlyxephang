@@ -1,16 +1,16 @@
 import axios from "axios";
 
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return "http://localhost:5003/api";
+  const cleanUrl = envUrl.replace(/\/$/, "");
+  return cleanUrl.endsWith("/api") ? cleanUrl : `${cleanUrl}/api`;
+};
 
 const apiClient = axios.create({
-baseURL:import.meta.env.VITE_API_URL+'/api' || "http://localhost:5003/api",
+  baseURL: getBaseUrl(),
 });
 
-// const refreshClient = axios.create({
-//   baseURL: "http://localhost:5003/api",
-//   withCredentials: true,
-// });
-
-// // Request
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

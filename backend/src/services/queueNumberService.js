@@ -1,6 +1,8 @@
 import ApiError from "../exceptions/ApiError.js";
 import QueueNumber from "../models/QueueNumber.js";
 import Service from "../models/Service.js";
+import Device from "../models/Device.js";
+import User from "../models/User.js";
 import { io } from "../socket.js";
 
 //create
@@ -150,3 +152,137 @@ export const deleteQueueNumberService =async(id)=>{
     }   
     return deleted;
 }
+
+export const getQueueOverviewStatsService = async ({ fromDate, toDate } = {}) => {
+  const dateFilter = {};
+  if (fromDate && toDate) {
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+    if (!isNaN(start) && !isNaN(end)) {
+      dateFilter.createdAt = { $gte: start, $lte: end };
+    }
+  }
+
+  const [
+    totalQueue,
+    waitingCount,
+    processingCount,
+    completedCount,
+    skippedCount,
+    totalServices,
+    totalDevices,
+    totalUsers
+  ] = await Promise.all([
+    QueueNumber.countDocuments(dateFilter),
+    QueueNumber.countDocuments({ ...dateFilter, status: "waiting" }),
+    QueueNumber.countDocuments({ ...dateFilter, status: "processing" }),
+    QueueNumber.countDocuments({ ...dateFilter, status: "completed" }),
+    QueueNumber.countDocuments({ ...dateFilter, status: "skipped" }),
+    Service.countDocuments({ status: "active" }),
+    Device.countDocuments({ status: "active" }),
+    User.countDocuments()
+  ]);
+
+  return {
+    totalQueue,
+    waitingCount,
+    processingCount,
+    completedCount,
+    skippedCount,
+    totalServices,
+    totalDevices,
+    totalUsers
+  };
+};
+
+export const getQueueStatsByServiceService = async ({ fromDate, toDate } = {}) => {
+  const matchStage = {};
+  if (fromDate && toDate) {
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+    if (!isNaN(start) && !isNaN(end)) {
+      matchStage.createdAt = { $gte: start, $lte: end };
+    }
+  }
+
+  const stats = await QueueNumber.aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: "$service",
+        total: { $sum: 1 },
+        waiting: { $sum: { $cond: [{ $eq: ["$status", "waiting"] }, 1, 0] } },
+        processing: { $sum: { $cond: [{ $eq: ["$status", "processing"] }, 1, 0] } },
+        completed: { $sum: { $cond: [{ $eq: ["$status", "completed"] }, 1, 0] } },
+        skipped: { $sum: { $cond: [{ $eq: ["$status", "skipped"] }, 1, 0] } }
+      }
+    },
+    {
+      $lookup: {
+        from: "services",
+        localField: "_id",
+        foreignField: "_id",
+        as: "serviceInfo"
+      }
+    },
+    { $unwind: { path: "$serviceInfo", preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        _id: 1,
+        service_name: "$serviceInfo.service_name",
+        service_code: "$serviceInfo.service_code",
+        total: 1,
+        waiting: 1,
+        processing: 1,
+        completed: 1,
+        skipped: 1
+      }
+    }
+  ]);
+
+  return stats;
+};
+
+export const getQueueStatsByTimeService = async ({ period = 'day', fromDate, toDate } = {}) => {
+  const matchStage = {};
+  if (fromDate && toDate) {
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+    if (!isNaN(start) && !isNaN(end)) {
+      matchStage.createdAt = { $gte: start, $lte: end };
+    }
+  }
+
+  let dateFormat = "%Y-%m-%d";
+  if (period === 'hour') dateFormat = "%Y-%m-%d %H:00";
+  if (period === 'month') dateFormat = "%Y-%m";
+  if (period === 'year') dateFormat = "%Y";
+
+  const stats = await QueueNumber.aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: { $dateToString: { format: dateFormat, date: "$createdAt", timezone: "+07:00" } },
+        total: { $sum: 1 },
+        waiting: { $sum: { $cond: [{ $eq: ["$status", "waiting"] }, 1, 0] } },
+        processing: { $sum: { $cond: [{ $eq: ["$status", "processing"] }, 1, 0] } },
+        completed: { $sum: { $cond: [{ $eq: ["$status", "completed"] }, 1, 0] } },
+        skipped: { $sum: { $cond: [{ $eq: ["$status", "skipped"] }, 1, 0] } }
+      }
+    },
+    { $sort: { _id: 1 } },
+    {
+      $project: {
+        time: "$_id",
+        _id: 0,
+        total: 1,
+        waiting: 1,
+        processing: 1,
+        completed: 1,
+        skipped: 1
+      }
+    }
+  ]);
+
+  return stats;
+};

@@ -1,5 +1,5 @@
 import express from 'express'
-import { createQueueNumberController, deleteQueueNumberController, getAllQueueNumberController, getQueueNumberByIdController, updateQueueNumberController, updateQueueNumberStatusController } from '../controllers/queueNumberController.js';
+import { createQueueNumberController, deleteQueueNumberController, getAllQueueNumberController, getQueueNumberByIdController, getQueueOverviewStatsController, getQueueStatsByServiceController, getQueueStatsByTimeController, updateQueueNumberController, updateQueueNumberStatusController } from '../controllers/queueNumberController.js';
 import { authorizeRole, verifyToken } from '../middlewares/authMiddleware.js';
 const queueNumberRouter= express.Router();
 /**
@@ -73,6 +73,79 @@ const queueNumberRouter= express.Router();
  */
 
 queueNumberRouter.post("/",verifyToken,createQueueNumberController)
+
+/**
+ * @swagger
+ * /api/queue/stats/overview:
+ *   get:
+ *     summary: Thống kê tổng quan cấp số (Tổng số, đang chờ, đang sử dụng, hoàn thành, bỏ qua)
+ *     tags:
+ *       - Queue Number Stats
+ *     parameters:
+ *       - in: query
+ *         name: fromDate
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: toDate
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lấy thống kê tổng quan thành công
+ */
+queueNumberRouter.get("/stats/overview", verifyToken, getQueueOverviewStatsController);
+
+/**
+ * @swagger
+ * /api/queue/stats/by-service:
+ *   get:
+ *     summary: Thống kê số lượng cấp số theo từng dịch vụ
+ *     tags:
+ *       - Queue Number Stats
+ *     parameters:
+ *       - in: query
+ *         name: fromDate
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: toDate
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lấy thống kê theo dịch vụ thành công
+ */
+queueNumberRouter.get("/stats/by-service", verifyToken, getQueueStatsByServiceController);
+
+/**
+ * @swagger
+ * /api/queue/stats/by-time:
+ *   get:
+ *     summary: Thống kê số lượng cấp số theo mốc thời gian (hour, day, month, year)
+ *     tags:
+ *       - Queue Number Stats
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [hour, day, month, year]
+ *           default: day
+ *       - in: query
+ *         name: fromDate
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: toDate
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lấy thống kê theo thời gian thành công
+ */
+queueNumberRouter.get("/stats/by-time", verifyToken, getQueueStatsByTimeController);
+
 /**
  * @swagger
  * /api/queue/{id}:
@@ -135,4 +208,4 @@ queueNumberRouter.get("/",verifyToken,getAllQueueNumberController)
 queueNumberRouter.put("/:id",verifyToken,authorizeRole("admin"),updateQueueNumberController)
 queueNumberRouter.delete("/:id",verifyToken,authorizeRole("admin"),deleteQueueNumberController)
 queueNumberRouter.put("/:id/status",verifyToken,authorizeRole("admin","staff","doctor"),updateQueueNumberStatusController)
-export default queueNumberRouter
+export default queueNumberRouter

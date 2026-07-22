@@ -1,23 +1,25 @@
-
-import { Form, Select, Button, Typography, Input } from 'antd';
-import { CaretDownOutlined, UserOutlined } from '@ant-design/icons';
+import { Form, Select, Input } from 'antd';
 import { useCreateQueueNumber } from '../../hooks/useQueueNumberQuery';
 import { useUI } from '../../context/UiProvider';
 import { useGetAllDeviceQuery } from '../../hooks/deviceQuery';
 import { useGetAllServiceQuery } from '../../hooks/serviceQuery';
-
-const { Title, Text } = Typography;
+import { Ticket, User, Monitor, Layers, Printer, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateQueueNumber = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const { setLoading } = useUI();
-  const { data:dataDevice} = useGetAllDeviceQuery();
-  const { data:dataService }  = useGetAllServiceQuery();
+  const { data: dataDevice } = useGetAllDeviceQuery();
+  const { data: dataService } = useGetAllServiceQuery();
   const createQueueNumber = useCreateQueueNumber();
-  const onFinish = (values: any) => {
+
+  const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      createQueueNumber.mutate(values);
+      await createQueueNumber.mutateAsync(values);
+      form.resetFields();
+      navigate('/queues');
     } catch (error) {
       console.log("Lỗi API:", error);
     } finally {
@@ -26,102 +28,96 @@ const CreateQueueNumber = () => {
   };
 
   return (
-    <div className="flex justify-center items-center p-4">
-      <div className="w-full flex flex-col justify-center items-center max-w-[1100px] bg-white rounded-3xl p-16 text-center shadow-[0px_4px_40px_rgba(0,0,0,0.05)]">
-        <Title level={1} className="!text-[#FF7506] !text-4xl !font-black !mb-4 tracking-wider">
-          CẤP SỐ MỚI
-        </Title>
-        <Text className="text-xl font-bold text-[#282739] block mb-12">
-          Vui lòng điền thông tin và chọn dịch vụ
-        </Text>
+    <div className="w-full max-w-3xl mx-auto space-y-6 pb-8">
+      {/* Clay Card Container */}
+      <div className="clay-card p-10 text-center space-y-8">
+        <div className="space-y-2">
+          <div className="inline-flex p-3 rounded-3xl bg-orange-100 text-orange-600 mb-2">
+            <Ticket size={36} />
+          </div>
+          <h1 className="text-3xl font-black text-orange-600 tracking-wider">CẤP SỐ MỚI</h1>
+          <p className="text-sm font-semibold text-slate-500">
+            Vui lòng nhập tên khách hàng, chọn thiết bị kiosk và dịch vụ tương ứng
+          </p>
+        </div>
+
         <Form
           form={form}
           layout="vertical"
           onFinish={onFinish}
-          className="max-w-[540px] mx-auto"
+          className="max-w-lg mx-auto text-left space-y-5"
         >
-          {/* Ô nhập tên người sử dụng */}
+          {/* Customer Name */}
           <Form.Item
+            label={<span className="font-bold text-slate-700 flex items-center gap-1.5"><User size={16} className="text-orange-500" /> Tên người cấp số *</span>}
             name="customer_name"
-            rules={[{ required: true, message: 'Vui lòng nhập tên của bạn!' }]}
+            rules={[{ required: true, message: 'Vui lòng nhập tên khách hàng!' }]}
           >
-            <Input 
+            <Input
               size="large"
-              placeholder="Nhập tên người cấp số" 
-              prefix={<UserOutlined className="text-gray-400 mr-2" />}
-              className="h-12 rounded-lg border-[#D4D4D4] hover:border-[#FF7506] focus:border-[#FF7506]"
+              placeholder="Ví dụ: Nguyễn Văn A"
+              className="rounded-xl py-2.5"
             />
           </Form.Item>
 
-          {/* Ô chọn thiết bị */}
+          {/* Device Selection */}
           <Form.Item
+            label={<span className="font-bold text-slate-700 flex items-center gap-1.5"><Monitor size={16} className="text-orange-500" /> Thiết bị sử dụng *</span>}
             name="deviceId"
             rules={[{ required: true, message: 'Vui lòng chọn thiết bị!' }]}
-            className="mt-6"
           >
             <Select
               size="large"
-              placeholder="Chọn thiết bị sử dụng"
-              className="text-left w-full custom-select"
-              suffixIcon={<CaretDownOutlined className="text-[#FF7506] text-lg" />}
+              placeholder="Chọn thiết bị kiosk phát số"
+              className="rounded-xl w-full"
               options={dataDevice?.devices.map((device) => ({
                 value: device._id,
                 label: device.device_name,
-              }))}
+              })) || []}
             />
           </Form.Item>
 
-          {/* Ô chọn dịch vụ */}
+          {/* Service Selection */}
           <Form.Item
+            label={<span className="font-bold text-slate-700 flex items-center gap-1.5"><Layers size={16} className="text-orange-500" /> Dịch vụ cần thực hiện *</span>}
             name="serviceId"
             rules={[{ required: true, message: 'Vui lòng chọn dịch vụ!' }]}
-            className="mt-6"
           >
             <Select
               size="large"
-              placeholder="Chọn dịch vụ cần thực hiện"
-              className="text-left w-full custom-select"
-              suffixIcon={<CaretDownOutlined className="text-[#FF7506] text-lg" />}
-              options={dataService?.services.map((service:any) => ({
+              placeholder="Chọn dịch vụ khám / tư vấn"
+              className="rounded-xl w-full"
+              options={dataService?.services.map((service: any) => ({
                 value: service._id,
                 label: service.service_name,
               })) || []}
             />
           </Form.Item>
 
-          {/* Group Nút bấm */}
-          <div className="flex justify-center gap-8 mt-16">
-            <Button
-              size="large"
-              onClick={() => form.resetFields()}
-              className="w-40 h-12 border-[#FF9138] text-[#FF9138] bg-[#FFF2E7] font-bold rounded-lg hover:!text-[#FF7506] hover:!border-[#FF7506] transition-all"
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-4 pt-6 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => {
+                form.resetFields();
+                navigate('/queues');
+              }}
+              className="clay-btn bg-white text-slate-600 hover:bg-slate-50 py-3 px-6 text-sm font-bold"
             >
-              Hủy bỏ
-            </Button>
+              <X size={18} />
+              <span>Hủy bỏ</span>
+            </button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              className="w-40 h-12 bg-[#FF9138] border-[#FF9138] font-bold rounded-lg hover:!bg-[#FF7506] shadow-md transition-all"
+            <button
+              type="submit"
+              className="clay-btn clay-btn-orange py-3 px-8 text-sm font-black flex items-center gap-2"
             >
-              In số
-            </Button>
+              <Printer size={18} />
+              <span>IN SỐ THỨ TỰ</span>
+            </button>
           </div>
         </Form>
       </div>
-      <style>{`
-        .custom-select .ant-select-selector {
-          height: 48px !important;
-          display: flex !important;
-          align-items: center !important;
-          border-radius: 8px !important;
-        }
-        .ant-select-focused:not(.ant-select-disabled).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-          border-color: #FF7506 !important;
-          box-shadow: 0 0 0 2px rgba(255, 117, 6, 0.1) !important;
-        }
-      `}</style>
     </div>
   );
 };

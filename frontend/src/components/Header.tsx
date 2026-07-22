@@ -1,37 +1,74 @@
-import {ChevronRight,Bell} from "lucide-react"
-import { useHeaderStore } from "../store/useHeaderStore"
-import { useNavigate } from "react-router-dom"
+import { ChevronRight, Bell, User, Sparkles } from "lucide-react";
+import { useHeaderStore } from "../store/useHeaderStore";
+import { useNavigate } from "react-router-dom";
 import { useProfile } from "../hooks/authQuery";
 
 const Header = () => {
-  const navigate =useNavigate();
-  const title = useHeaderStore((state)=>state.title)
-  const subTitle = useHeaderStore((state)=>state.subTitle)
-  const {data,isLoading} =useProfile();
-if (isLoading) return <p>Loading...</p>;
+  const navigate = useNavigate();
+  const title = useHeaderStore((state) => state.title);
+  const subTitle = useHeaderStore((state) => state.subTitle);
+  const { data, isLoading } = useProfile();
+
   return (
-    <div className="flex h-[70px] items-center justify-between w-full ">
-      <div className="flex items-center gap-1 text-xl font-medium">
-        <p className={!subTitle?'text-[#FF7506]':"text-[#7E7D88]"}>{title}</p>
-        {subTitle&&
-        <>
-        <ChevronRight size={16} color="#7E7D88" />
-        <p className="text-[#FF7506]">{subTitle}</p>
-        </>
-        }
+    <header className="flex h-16 items-center justify-between w-full mb-2">
+      {/* Breadcrumb / Title Clay Card */}
+      <div className="clay-card px-5 py-2.5 flex items-center gap-2 text-sm font-semibold">
+        <div className="flex items-center gap-2 text-slate-500">
+          <Sparkles size={16} className="text-orange-500" />
+          <span>{title}</span>
+        </div>
+        {subTitle && (
+          <>
+            <ChevronRight size={14} className="text-slate-300" />
+            <span className="text-orange-600 font-bold bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100">
+              {subTitle}
+            </span>
+          </>
+        )}
       </div>
-      <div className="flex items-center cursor-pointer gap-4 h-full pr-9">
-        <Bell className="bg-[#FFF2E7] text-[#FF7506] rounded-[50%]" />
-        <div onClick={()=>navigate("/profile")} className="flex gap-1.5 h-[60%] items-center">
-          <img src={data?.data?.avatar_url} alt=""  className="h-full object-cover rounded-[50%] "/>
-          <div>
-            <p className="text-[#7E7D88] text-sm">Xin chào</p>
-            <p className="text-[#535261] font-medium">{data?.data?.full_name}</p>
+
+      {/* User Actions & Profile Clay Pill */}
+      <div className="flex items-center gap-4">
+        {/* Notification Bell Clay Button */}
+        <div className="relative cursor-pointer clay-btn p-3 rounded-2xl bg-white hover:bg-orange-50 transition-all">
+          <Bell size={18} className="text-slate-600 hover:text-orange-500" />
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white shadow-sm animate-pulse">
+            3
+          </span>
+        </div>
+
+        {/* Profile Card */}
+        <div
+          onClick={() => navigate("/profile")}
+          className="clay-card px-4 py-2 flex items-center gap-3 cursor-pointer hover:scale-[1.02] transition-transform duration-200"
+        >
+          <div className="relative">
+            {isLoading ? (
+              <div className="w-9 h-9 rounded-full bg-slate-200 animate-pulse" />
+            ) : data?.data?.avatar_url ? (
+              <img
+                src={data?.data?.avatar_url}
+                alt="Avatar"
+                className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-sm"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+                <User size={18} />
+              </div>
+            )}
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+          </div>
+
+          <div className="flex flex-col text-left">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Xin chào</span>
+            <span className="text-xs font-bold text-slate-700 leading-tight">
+              {isLoading ? "..." : data?.data?.full_name || "Quản trị viên"}
+            </span>
           </div>
         </div>
       </div>
-    </div>
-  )
-}
+    </header>
+  );
+};
 
-export default Header
+export default Header;
