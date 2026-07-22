@@ -383,12 +383,12 @@ const DashboardPage = () => {
                     paddingAngle={4}
                     dataKey="total"
                   >
-                    {serviceStats.map((entry, index) => (
+                    {serviceStats.map((_entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: any, name: any, item: any) => [
+                    formatter={(value: any, _name: any, item: any) => [
                       `${value} lượt`,
                       item.payload.service_name || 'Dịch vụ'
                     ]}
